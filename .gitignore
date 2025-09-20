@@ -1,0 +1,57 @@
+# Go项目常见的忽略规则
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.prof
+
+# 日志文件
+*.log
+
+# 临时文件
+*.tmp
+*.temp
+.DS_Store
+
+# 编辑器目录和文件
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 构建目录
+bin/
+build/
+
+# 包目录
+pkg/
+
+# 环境变量文件
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 数据库文件
+*.db
+*.sqlite
+
+# OS生成的文件
+Thumbs.db
+.DS_Store
+
+# 文件上传目录
+uploads/
+
+# 配置文件
+config.json
+
+# 项目二进制文件
+file-server

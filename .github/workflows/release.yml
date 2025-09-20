@@ -1,0 +1,127 @@
+name: Build Multi-Platform Binary Releases
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos:
+          - linux
+          - windows
+          - darwin
+        goarch:
+          - amd64
+          - arm64
+        exclude:
+          # 排除不支持的组合
+          - goos: windows
+            goarch: arm64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Extract version from tag
+        id: extract_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Build binary
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          BINARY_NAME=GoStaticServe
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            BINARY_NAME="${BINARY_NAME}.exe"
+          fi
+          go build -o $BINARY_NAME -ldflags "-s -w -X main.version=${{ env.VERSION }}" cmd/server/main.go
+          mkdir -p release
+          mv $BINARY_NAME release/
+
+      - name: Copy necessary files
+        run: |
+          # 复制配置文件示例
+          cp config.json.example release/
+          # 复制web静态文件
+          mkdir -p release/web/static
+          cp -r web/static/* release/web/static/
+          # 复制README.md
+          cp README.md release/
+          # 复制文档
+          mkdir -p release/doc
+          cp -r doc/* release/doc/
+          # 创建uploads目录
+          mkdir -p release/uploads
+          # 复制安装脚本
+          if [ -d "scripts" ]; then
+            mkdir -p release/scripts
+            cp -r scripts/* release/scripts/
+            # 设置脚本可执行权限
+            chmod +x release/scripts/*.sh
+          fi
+
+      - name: Create release archive
+        run: |
+          ARCHIVE_NAME="GoStaticServe_${{ env.VERSION }}_${{ matrix.goos }}_${{ matrix.goarch }}"
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            ARCHIVE_NAME="${ARCHIVE_NAME}.zip"
+            cd release && zip -r ../$ARCHIVE_NAME . && cd ..
+          else
+            ARCHIVE_NAME="${ARCHIVE_NAME}.tar.gz"
+            cd release && tar -czvf ../$ARCHIVE_NAME . && cd ..
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: GoStaticServe_${{ matrix.goos }}_${{ matrix.goarch }}
+          path: GoStaticServe_${{ env.VERSION }}_${{ matrix.goos }}_${{ matrix.goarch }}*
+
+  create-release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: extract_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: ./artifacts
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release v${{ env.VERSION }}
+          body: |
+            ## GoStaticServe v${{ env.VERSION }}
+            高性能、轻量级的静态文件服务器
+            
+            ### 更新内容
+            - 请在此处添加更新说明
+            
+            ### 下载链接
+            各平台二进制文件已附加在下方
+          files: |
+            ./artifacts/**/*
+          draft: false
+          prerelease: false

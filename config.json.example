@@ -1,0 +1,9 @@
+{
+{
+    "ServerPort": "8080",
+    "RootDir": "./uploads",
+    "Username": "admin",
+    "Password": "admin123",
+    "LogLevel": "INFO",
+    "LogFile": ""
+}

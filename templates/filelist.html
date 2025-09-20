@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>文件列表</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 2px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>文件列表</h1>
+        <table>
+            <tr>
+                <th>文件名</th>
+                <th>大小</th>
+                <th>修改时间</th>
+                <th>操作</th>
+            </tr>
+            {{range .Files}}
+            {{if not .IsDir}}
+            <tr>
+                <td><a href="javascript:void(0);" onclick="openFile('{{.Name}}')">{{.Name}}</a></td>
+                <td>{{.SizeFormatted}}</td>
+                <td>{{.ModTimeFormatted}}</td>
+                <td><button class="delete-btn" onclick="deleteFile('{{.Name}}')">删除</button></td>
+            </tr>
+            {{end}}
+            {{end}}
+        </table>
+        <script>
+            function openFile(filename) {
+                window.open('/files/' + encodeURIComponent(filename), '_blank');
+            }
+            
+            function deleteFile(filename) {
+                if (confirm('确定要删除文件 "' + filename + '" 吗？')) {
+                    fetch('/api/files/' + encodeURIComponent(filename), {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': 'Basic ' + btoa(prompt('请输入用户名:') + ':' + prompt('请输入密码:'))
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            alert('文件删除成功');
+                            window.location.reload();
+                        } else {
+                            alert('文件删除失败');
+                        }
+                    }).catch(error => {
+                        console.error('删除文件时出错:', error);
+                        alert('删除文件时出错');
+                    });
+                }
+            }
+        </script>
+        <div style="margin-top: 20px;">
+            <a href="/">返回上传页面</a>
+        </div>
+    </div>
+</body>
+</html>
