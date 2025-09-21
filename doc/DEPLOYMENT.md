@@ -1,10 +1,10 @@
-# GoStaticServe Deployment Guide
+# put-file Deployment Guide
 
-This document details how to automatically deploy GoStaticServe to a remote server using GitHub Actions.
+This document details how to automatically deploy put-file to a remote server using GitHub Actions.
 
 ## I. Automatic Deployment (CD) Configuration
 
-GoStaticServe provides a complete CI/CD process, implementing automatic build and deployment through GitHub Actions.
+put-file provides a complete CI/CD process, implementing automatic build and deployment through GitHub Actions.
 
 ### 1. GitHub Secrets Configuration
 
@@ -23,34 +23,34 @@ Before deployment, you need to complete the following preparation work on the ta
 
 1. **Create Deployment Directory**
    ```bash
-   sudo mkdir -p /opt/GoStaticServe/uploads
-   sudo chown -R your_username:your_group /opt/GoStaticServe
+   sudo mkdir -p /opt/put-file/uploads
+   sudo chown -R your_username:your_group /opt/put-file
    ```
 
 2. **Create Running User** (optional, recommended to run the service with a non-root user)
    ```bash
-   sudo adduser --system --no-create-home --group gostaticserve
-   sudo chown -R gostaticserve:gostaticserve /opt/GoStaticServe
+   sudo adduser --system --no-create-home --group put-file
+   sudo chown -R put-file:put-file /opt/put-file
    ```
 
 3. **Install and Configure systemd Service**
    
-   Use the systemd service file template provided in the project (`doc/gostaticserve.service`):
+   Use the systemd service file template provided in the project (`doc/put-file.service`):
    
    ```bash
    # Copy the service file to systemd directory
-   sudo cp gostaticserve.service /etc/systemd/system/
+   sudo cp put-file.service /etc/systemd/system/
    
    # Modify configuration according to actual environment
-   sudo nano /etc/systemd/system/gostaticserve.service
+   sudo nano /etc/systemd/system/put-file.service
    
    # Enable and start the service
    sudo systemctl daemon-reload
-   sudo systemctl enable gostaticserve
-   sudo systemctl start gostaticserve
+   sudo systemctl enable put-file
+   sudo systemctl start put-file
    
    # Check service status
-   sudo systemctl status gostaticserve
+   sudo systemctl status put-file
    ```
 
 4. **Configure Firewall**
@@ -81,7 +81,7 @@ When the deployment process is triggered, the following steps will be executed:
 3. Connect to the remote server via SSH
 4. Backup current version files (if they exist)
 5. Upload the new version binary file
-6. Restart the GoStaticServe service
+6. Restart the put-file service
 
 ### 3. Manually Trigger Deployment
 
@@ -100,58 +100,58 @@ If you need to deploy manually or perform manual intervention when automatic dep
 Download the Linux binary file of the corresponding version from the GitHub Releases page:
 
 ```bash
-wget https://github.com/3ziye/GoStaticServe/releases/download/vX.Y.Z/GoStaticServe_vX.Y.Z_linux_amd64.tar.gz
+wget https://github.com/3ziye/put-file/releases/download/vX.Y.Z/put-file_vX.Y.Z_linux_amd64.tar.gz
 ```
 
 ### 2. Extract and Deploy
 
 ```bash
 # Extract files
-mkdir -p /opt/GoStaticServe/backups/$(date +%Y%m%d%H%M%S)
-cp -a /opt/GoStaticServe/GoStaticServe /opt/GoStaticServe/backups/$(date +%Y%m%d%H%M%S)/
+mkdir -p /opt/put-file/backups/$(date +%Y%m%d%H%M%S)
+cp -a /opt/put-file/put-file /opt/put-file/backups/$(date +%Y%m%d%H%M%S)/
 
-tar -xzf GoStaticServe_vX.Y.Z_linux_amd64.tar.gz
+tar -xzf put-file_vX.Y.Z_linux_amd64.tar.gz
 
 # Deploy new version
-sudo cp GoStaticServe /opt/GoStaticServe/
-sudo chmod +x /opt/GoStaticServe/GoStaticServe
-sudo chown gostaticserve:gostaticserve /opt/GoStaticServe/GoStaticServe
+sudo cp put-file /opt/put-file/
+sudo chmod +x /opt/put-file/put-file
+sudo chown put-file:put-file /opt/put-file/put-file
 
 # Restart service
-sudo systemctl restart gostaticserve
+sudo systemctl restart put-file
 ```
 
 ## IV. Configuration File Deployment
 
-GoStaticServe supports more flexible configuration through configuration files. If you need to use a configuration file:
+put-file supports more flexible configuration through configuration files. If you need to use a configuration file:
 
 1. **Create Configuration File**
    ```bash
-   nano /opt/GoStaticServe/config.json
+   nano /opt/put-file/config.json
    ```
 
 2. **Configuration File Content Example**
    ```json
    {
      "ServerPort": "8080",
-     "RootDir": "/opt/GoStaticServe/uploads",
+     "RootDir": "/opt/put-file/uploads",
      "Username": "admin",
      "Password": "your_secure_password",
      "LogLevel": "INFO",
-     "LogFile": "/var/log/gostaticserve.log"
+     "LogFile": "/var/log/put-file.log"
    }
    ```
 
 3. **Update systemd Service Configuration**
    Modify the `ExecStart` line to start with the configuration file:
    ```
-   ExecStart=/opt/GoStaticServe/GoStaticServe --config=/opt/GoStaticServe/config.json
+   ExecStart=/opt/put-file/put-file --config=/opt/put-file/config.json
    ```
 
 4. **Restart Service**
    ```bash
    sudo systemctl daemon-reload
-   sudo systemctl restart gostaticserve
+   sudo systemctl restart put-file
    ```
 
 ## V. Post-Deployment Verification
@@ -160,16 +160,16 @@ After deployment is complete, you can verify if the service is running normally 
 
 1. **Check Service Status**
    ```bash
-   sudo systemctl status gostaticserve
+   sudo systemctl status put-file
    ```
 
 2. **View Logs**
    ```bash
    # View systemd logs
-   journalctl -u gostaticserve
+   journalctl -u put-file
    
    # View application logs
-   tail -f /var/log/gostaticserve.log
+   tail -f /var/log/put-file.log
    ```
 
 3. **Access the Service**
@@ -196,4 +196,4 @@ After deployment is complete, you can verify if the service is running normally 
    - Confirm server port is correctly mapped
    - View application logs for detailed information
 
-Through the above steps, you can successfully configure and use the automatic deployment function of GoStaticServe to achieve continuous integration and continuous deployment of code.
+Through the above steps, you can successfully configure and use the automatic deployment function of put-file to achieve continuous integration and continuous deployment of code.

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/3ziye/GoStaticServe/internal/handlers"
+	"github.com/3ziye/put-file/internal/handlers"
 )
 
 // This is a simple test file used to verify the project structure

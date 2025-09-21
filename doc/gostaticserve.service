@@ -1,5 +1,5 @@
 [Unit]
-Description=GoStaticServe - High Performance Static File Server
+Description=put-file - High Performance Static File Server
 After=network.target
 Wants=network.target
 
@@ -12,10 +12,10 @@ User=www-data
 Group=www-data
 
 # Working directory
-WorkingDirectory=/opt/GoStaticServe
+WorkingDirectory=/opt/put-file
 
 # Service start command
-ExecStart=/opt/GoStaticServe/GoStaticServe \n--port=8080 \n--root=/opt/GoStaticServe/uploads \n--username=admin \n--password=your_secure_password \n--log-level=INFO \n--log-file=/var/log/gostaticserve.log
+ExecStart=/opt/put-file/put-file \n--port=8080 \n--root=/opt/put-file/uploads \n--username=admin \n--password=your_secure_password \n--log-level=INFO \n--log-file=/var/log/put-file.log
 
 # Restart policy
 Restart=on-failure
@@ -28,8 +28,8 @@ Environment=GO_ENV=production
 LimitNOFILE=65535
 
 # Log configuration
-StandardOutput=append:/var/log/gostaticserve.stdout.log
-StandardError=append:/var/log/gostaticserve.stderr.log
+StandardOutput=append:/var/log/put-file.stdout.log
+StandardError=append:/var/log/put-file.stderr.log
 
 [Install]
 WantedBy=multi-user.target
@@ -40,7 +40,7 @@ WantedBy=multi-user.target
 # 3. Replace your_secure_password with the actual admin password
 # 4. You can adjust the port, root directory and other parameters as needed
 # 5. If you want to use a configuration file, you can replace the parameters with --config=/path/to/config.json
-# 6. Install the service: sudo cp gostaticserve.service /etc/systemd/system/
-# 7. Enable the service: sudo systemctl enable gostaticserve
-# 8. Start the service: sudo systemctl start gostaticserve
-# 9. Check status: sudo systemctl status gostaticserve
+# 6. Install the service: sudo cp put-file.service /etc/systemd/system/
+# 7. Enable the service: sudo systemctl enable put-file
+# 8. Start the service: sudo systemctl start put-file
+# 9. Check status: sudo systemctl status put-file

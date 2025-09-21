@@ -1,234 +1,234 @@
-# 文件服务器开发指南
+# File Server Development Guide
 
-本文档提供了文件服务器项目的开发指南，帮助开发者快速设置开发环境、理解开发流程并进行代码贡献。
+This document provides development guidelines for the file server project, helping developers quickly set up a development environment, understand the development process, and contribute code.
 
-## 开发环境准备
+## Development Environment Setup
 
-### 必要工具
+### Required Tools
 
-1. **Go开发环境**
-   - 版本要求：Go 1.21或更高版本
-   - 下载地址：https://golang.org/dl/
+1. **Go Development Environment**
+   - Version requirement: Go 1.21 or higher
+   - Download link: https://golang.org/dl/
 
 2. **Git**
-   - 用于代码管理
-   - 下载地址：https://git-scm.com/downloads
+   - For code management
+   - Download link: https://git-scm.com/downloads
 
-3. **文本编辑器/IDE**
-   - 推荐使用VSCode + Go插件，或GoLand
-   - VSCode下载：https://code.visualstudio.com/
-   - GoLand下载：https://www.jetbrains.com/go/
+3. **Text Editor/IDE**
+   - Recommended: VSCode + Go plugin, or GoLand
+   - VSCode download: https://code.visualstudio.com/
+   - GoLand download: https://www.jetbrains.com/go/
 
-4. **Docker（可选）**
-   - 用于容器化部署和测试
-   - 下载地址：https://www.docker.com/products/docker-desktop
+4. **Docker (Optional)**
+   - For containerized deployment and testing
+   - Download link: https://www.docker.com/products/docker-desktop
 
-### 环境配置
+### Environment Configuration
 
-1. 安装Go并配置`GOPATH`环境变量
-2. 确保`$GOPATH/bin`在系统的`PATH`环境变量中
-3. 安装Git并配置用户信息
+1. Install Go and configure the `GOPATH` environment variable
+2. Ensure `$GOPATH/bin` is in the system's `PATH` environment variable
+3. Install Git and configure user information
 
-## 使用VSCode远程容器开发环境
+## Using VSCode Remote Container Development Environment
 
-项目支持使用VSCode的Remote - Containers扩展进行开发，这可以提供一个预配置的、隔离的开发环境，无需在本地安装Go等依赖。
+The project supports development using VSCode's Remote - Containers extension, which provides a pre-configured, isolated development environment without the need to install Go and other dependencies locally.
 
-### 前提条件
+### Prerequisites
 
-- 已安装VSCode
-- 已安装VSCode的[Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)扩展
-- 已安装Docker
+- VSCode installed
+- VSCode [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension installed
+- Docker installed
 
-### 使用步骤
+### Usage Steps
 
-1. 打开VSCode
-2. 安装Remote - Containers扩展
-3. 使用VSCode打开项目文件夹
-4. 点击VSCode右下角的绿色远程指示器图标
-5. 选择"Reopen in Container"选项
-6. VSCode会自动构建容器并在容器内打开项目
+1. Open VSCode
+2. Install the Remote - Containers extension
+3. Open the project folder with VSCode
+4. Click the green remote indicator icon in the lower right corner of VSCode
+5. Select the "Reopen in Container" option
+6. VSCode will automatically build the container and open the project inside it
 
-### 开发环境特性
+### Development Environment Features
 
-- **预配置环境**：包含所有必要的Go开发工具和依赖
-- **热重载支持**：预装air工具支持代码热重载
-- **调试支持**：预装delve调试器和相关配置
-- **扩展推荐**：自动安装推荐的VSCode扩展
-- **持久化缓存**：缓存Go依赖和构建文件，提高开发效率
-- **文件同步**：本地文件与容器内文件实时同步
+- **Pre-configured Environment**: Contains all necessary Go development tools and dependencies
+- **Hot Reload Support**: Pre-installed air tool for code hot reloading
+- **Debug Support**: Pre-installed delve debugger and related configurations
+- **Extension Recommendations**: Automatically installs recommended VSCode extensions
+- **Persistent Caching**: Caches Go dependencies and build files to improve development efficiency
+- **File Synchronization**: Real-time synchronization between local files and files inside the container
 
-### 常用操作
+### Common Operations
 
-- **运行应用**：在VSCode终端中执行`air -c .air.toml`启动带热重载的应用
-- **调试应用**：使用VSCode的调试功能直接调试容器内的应用
-- **安装依赖**：在VSCode终端中执行`go mod tidy`安装或更新依赖
-- **代码格式化**：保存文件时自动格式化代码（已配置）
+- **Run Application**: Execute `air -c .air.toml` in the VSCode terminal to start the application with hot reloading
+- **Debug Application**: Use VSCode's debugging features to directly debug the application inside the container
+- **Install Dependencies**: Execute `go mod tidy` in the VSCode terminal to install or update dependencies
+- **Code Formatting**: Code is automatically formatted when saving files (configured)
 
-### 自定义配置
+### Custom Configuration
 
-如需自定义开发环境配置：
+To customize the development environment configuration:
 
-1. 修改`.devcontainer/devcontainer.json`文件自定义容器配置、扩展和设置
-2. 修改`.devcontainer/Dockerfile`文件自定义容器镜像
-3. 修改`.devcontainer/docker-compose.yml`文件自定义多容器配置（如添加数据库等服务）
+1. Modify the `.devcontainer/devcontainer.json` file to customize container configuration, extensions, and settings
+2. Modify the `.devcontainer/Dockerfile` file to customize the container image
+3. Modify the `.devcontainer/docker-compose.yml` file to customize multi-container configurations (e.g., adding database services)
 
-## 获取源代码
+## Getting Source Code
 
-1. 克隆代码仓库：
+1. Clone the repository:
 
 ```bash
-git clone https://github.com/3ziye/GoStaticServe.git
-cd GoStaticServe
+git clone https://github.com/3ziye/put-file.git
+cd put-file
 ```
 
-2. 初始化Go模块：
+2. Initialize Go modules:
 
 ```bash
 go mod tidy
 ```
 
-## 项目结构回顾
+## Project Structure Review
 
-请参考[架构文档](architecture.md)了解项目的整体结构和各模块的功能。
+Please refer to the [Architecture Document](architecture.md) to understand the overall structure of the project and the functionality of each module.
 
-## 本地开发流程
+## Local Development Process
 
-### 运行开发服务器
+### Running the Development Server
 
-在开发过程中，可以使用以下命令启动开发服务器：
+During development, you can start the development server using the following command:
 
 ```bash
 go run cmd/server/main.go
 ```
 
-也可以指定参数：
+You can also specify parameters:
 
 ```bash
 go run cmd/server/main.go --port=8081 --root=./myfiles
 ```
 
-### 构建项目
+### Building the Project
 
-使用以下命令构建项目：
+Build the project using the following command:
 
 ```bash
 go build -o file-server cmd/server/main.go
 ```
 
-构建完成后，可以直接运行生成的可执行文件：
+After building, you can run the generated executable directly:
 
 ```bash
 ./file-server
 ```
 
-### 运行测试
+### Running Tests
 
-使用以下命令运行测试：
+Run tests using the following command:
 
 ```bash
 go test ./tests/...
 ```
 
-## 代码风格指南
+## Code Style Guide
 
-为了保持代码的一致性和可读性，请遵循以下代码风格指南：
+To maintain code consistency and readability, please follow these code style guidelines:
 
-1. **Go代码风格**
-   - 遵循Go语言的标准代码风格
-   - 使用`gofmt`格式化代码
-   - 使用`golint`检查代码质量
+1. **Go Code Style**
+   - Follow Go's standard code style
+   - Use `gofmt` to format code
+   - Use `golint` to check code quality
 
-2. **命名规范**
-   - 包名使用小写字母，不使用下划线
-   - 函数名使用驼峰命名法，首字母大写表示公开函数
-   - 变量名使用驼峰命名法，首字母小写表示私有变量
+2. **Naming Conventions**
+   - Package names use lowercase letters, no underscores
+   - Function names use camelCase, with uppercase first letter for public functions
+   - Variable names use camelCase, with lowercase first letter for private variables
 
-3. **注释规范**
-   - 为公开函数、类型和变量添加注释
-   - 注释应该清晰地描述代码的功能和用途
-   - 使用GoDoc格式编写注释
+3. **Commenting Conventions**
+   - Add comments for public functions, types, and variables
+   - Comments should clearly describe the functionality and purpose of the code
+   - Use GoDoc format for comments
 
-## 配置管理
+## Configuration Management
 
-开发过程中，可以通过以下方式配置项目：
+During development, you can configure the project through the following methods:
 
-1. **配置文件**：编辑`config.json`文件
-2. **环境变量**：设置相应的环境变量
-3. **命令行参数**：启动时指定命令行参数
+1. **Configuration File**: Edit the `config.json` file
+2. **Environment Variables**: Set corresponding environment variables
+3. **Command-line Arguments**: Specify command-line arguments when starting
 
-配置项的优先级从高到低为：命令行参数 > 环境变量 > 配置文件 > 默认配置。
+The priority of configuration items from highest to lowest is: command-line arguments > environment variables > configuration file > default configuration.
 
-主要配置项包括：
-- ServerPort：服务器端口
-- RootDir：文件根目录
-- Username：管理员用户名
-- Password：管理员密码
-- LogLevel：日志级别（DEBUG/INFO/WARN/ERROR/FATAL）
-- LogFile：日志文件路径（为空时输出到标准输出）
+Main configuration items include:
+- ServerPort: Server port
+- RootDir: File root directory
+- Username: Administrator username
+- Password: Administrator password
+- LogLevel: Log level (DEBUG/INFO/WARN/ERROR/FATAL)
+- LogFile: Log file path (outputs to standard output when empty)
 
-## 调试技巧
+## Debugging Techniques
 
-1. **使用日志**：在代码中添加日志输出，使用`logs`包的不同级别日志函数（Debug/Info/Warn/Error/Fatal）
-   - 可以通过设置`--log-level=DEBUG`参数来查看更详细的日志信息
-2. **使用Delve调试器**：Go的官方调试器
+1. **Using Logs**: Add log output in code, use different level log functions from the `logs` package (Debug/Info/Warn/Error/Fatal)
+   - You can view more detailed log information by setting the `--log-level=DEBUG` parameter
+2. **Using Delve Debugger**: Go's official debugger
    ```bash
 dlv debug cmd/server/main.go
 ```
-3. **使用VSCode调试**：配置VSCode的调试功能，添加launch.json文件
+3. **Using VSCode Debugging**: Configure VSCode's debugging features, add a launch.json file
 
-## 测试指南
+## Testing Guide
 
-### 单元测试
+### Unit Testing
 
-单元测试应该放在被测包的同一目录下，文件名以`_test.go`结尾。例如，对于`internal/handlers`包，测试文件应该命名为`handlers_test.go`。
+Unit tests should be placed in the same directory as the tested package, with filenames ending in `_test.go`. For example, for the `internal/handlers` package, the test file should be named `handlers_test.go`.
 
-### 集成测试
+### Integration Testing
 
-集成测试应该放在`tests`目录下，测试多个组件的协同工作。
+Integration tests should be placed in the `tests` directory to test the collaborative work of multiple components.
 
-## Docker开发环境
+## Docker Development Environment
 
-对于使用Docker进行开发的开发者，可以使用以下命令构建和运行Docker镜像：
+For developers using Docker for development, you can build and run Docker images using the following commands:
 
 ```bash
-# 构建镜像
+# Build image
 docker build -t file-server-dev .
 
-# 运行容器
+# Run container
 docker run -p 8080:8080 -v $(pwd):/app file-server-dev
 ```
 
-## CI/CD流程
+## CI/CD Process
 
-项目使用GitHub Actions进行持续集成和持续部署。CI/CD工作流配置在`.github/workflows/ci.yml`文件中，包含以下步骤：
+The project uses GitHub Actions for continuous integration and continuous deployment. The CI/CD workflow is configured in the `.github/workflows/ci.yml` file and includes the following steps:
 
-1. 检出代码
-2. 设置Go环境
-3. 安装依赖
-4. 运行测试
-5. 构建项目
+1. Check out code
+2. Set up Go environment
+3. Install dependencies
+4. Run tests
+5. Build project
 
-## 提交代码流程
+## Code Submission Process
 
-1. 确保代码通过所有测试
-2. 使用`gofmt`格式化代码
-3. 提交代码，编写清晰的提交信息
-4. 创建Pull Request
+1. Ensure code passes all tests
+2. Format code using `gofmt`
+3. Commit code with clear commit messages
+4. Create a Pull Request
 
-## 常见问题解决
+## Common Problem Solutions
 
-### 1. 依赖问题
+### 1. Dependency Issues
 
-如果遇到依赖问题，可以尝试以下命令：
+If you encounter dependency issues, you can try the following commands:
 
 ```bash
 go clean -modcache
 go mod tidy
 ```
 
-### 2. 端口占用问题
+### 2. Port Occupancy Issues
 
-如果启动服务器时遇到端口占用问题，可以使用以下命令查看占用端口的进程，并关闭它：
+If you encounter port occupancy issues when starting the server, you can use the following commands to check the process occupying the port and close it:
 
 ```bash
 # Windows
@@ -240,46 +240,46 @@ lsof -i :8080
 kill -9 <PID>
 ```
 
-或者，使用`--port`参数指定一个未被占用的端口。
+Alternatively, specify an unoccupied port using the `--port` parameter.
 
-### 3. 文件权限问题
+### 3. File Permission Issues
 
-如果上传或访问文件时遇到权限问题，确保上传目录具有正确的读写权限：
+If you encounter permission issues when uploading or accessing files, ensure the upload directory has the correct read and write permissions:
 
 ```bash
 # Linux/macOS
 chmod -R 755 ./uploads
 
 # Windows
-# 在文件资源管理器中设置权限
+# Set permissions in File Explorer
 ```
 
-## 扩展开发
+## Extension Development
 
-### 添加新功能
+### Adding New Features
 
-1. 确定功能所属的模块
-2. 在相应的包中实现功能
-3. 更新相关的接口和配置
-4. 编写测试用例
-5. 更新文档
+1. Determine which module the feature belongs to
+2. Implement the feature in the corresponding package
+3. Update related interfaces and configurations
+4. Write test cases
+5. Update documentation
 
-### 修改现有功能
+### Modifying Existing Features
 
-1. 了解现有功能的实现逻辑
-2. 进行必要的修改
-3. 确保所有测试通过
-4. 更新相关文档
+1. Understand the implementation logic of the existing feature
+2. Make necessary modifications
+3. Ensure all tests pass
+4. Update related documentation
 
-## 文档更新
+## Documentation Updates
 
-添加或修改功能后，请及时更新相关文档：
+After adding or modifying features, please update relevant documentation in a timely manner:
 
-1. README.md：项目概述、安装和使用方法
-2. doc/api.md：API接口文档
-3. doc/architecture.md：架构设计文档
-4. doc/development.md：开发指南文档
+1. README.md: Project overview, installation, and usage methods
+2. doc/api.md: API interface documentation
+3. doc/architecture.md: Architecture design documentation
+4. doc/development.md: Development guide documentation
 
-## 联系方式
+## Contact Information
 
-如有任何问题或建议，请联系项目维护者。
+If you have any questions or suggestions, please contact the project maintainers.

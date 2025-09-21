@@ -24,7 +24,7 @@ services:
     security_opt:
       - seccomp:unconfined
   
-  # 可选：如果项目将来需要数据库，可以取消注释以下配置
+  # Optional: Uncomment below configuration if database is needed in the future
   # db:
   #   image: postgres:13-alpine
   #   restart: unless-stopped
@@ -33,7 +33,7 @@ services:
   #   environment:
   #     POSTGRES_USER: user
   #     POSTGRES_PASSWORD: password
-  #     POSTGRES_DB: gostaticserve
+  #     POSTGRES_DB: put-file
   #   ports:
   #     - "5432:5432"
 

@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest a new feature for GoStaticServe
+about: Suggest a new feature for put-file
 title: '[Feature] Short description of the feature'
 labels: 'enhancement'
 assignees: ''

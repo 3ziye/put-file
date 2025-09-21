@@ -1,15 +1,15 @@
 <h1 align="center" style="border-bottom: none"> 
      <a href="" target="_blank"> 
-         <alt="GoStaticServe" src="" width="100" height="100"> 
+         <alt="put-file" src="" width="100" height="100"> 
      </a> 
-     <br>GoStaticServe 
+     <br>put-file 
  </h1> 
  
  <div align="center" style="line-height: 2;"> 
    [<a href="/README.md">English</a>] | [<a href="/readme/README_ar.md">العربية</a>] | [<a href="/readme/README_da.md">Dansk</a>] | [<a href="/readme/README_de.md">Deutsch</a>] | [<a href="/readme/README_es.md">Español</a>] | [<a href="/readme/README_fr.md">Français</a>] | [<a href="/readme/README_it.md">Italiano</a>] | [<a href="/readme/README_ja.md">日本語</a>] | [<a href="/readme/README_ko.md">한국어</a>] | [<a href="/readme/README_nl.md">Nederlands</a>] | [<a href="/readme/README_no.md">Norsk</a>] | [<a href="/readme/README_pl.md">Polski</a>] | [<a href="/readme/README_pt.md">Português</a>] | [<a href="/readme/README_ru.md">Русский</a>] | [<a href="/readme/README_sv.md">Svenska</a>] | [<a href="/readme/README_th.md">ไทย</a>] | [<a href="/readme/README_vi.md">Tiếng Việt</a>] | [<a href="/readme/README_zh.md">中文(简体)</a>] 
    <br> 
    
-   | ** [Issues](https://github.com/3ziye/GoStaticServe/issues) ** | ** [Releases](https://github.com/3ziye/GoStaticServe/releases) ** | ** [README](https://github.com/3ziye/GoStaticServe/blob/main/README.md) ** | ** [Architecture](https://github.com/3ziye/GoStaticServe/blob/main/doc/architecture.md) ** | 
+   | ** [Issues](https://github.com/3ziye/put-file/issues) ** | ** [Releases](https://github.com/3ziye/put-file/releases) ** | ** [README](https://github.com/3ziye/put-file/blob/main/README.md) ** | ** [Architecture](https://github.com/3ziye/put-file/blob/main/doc/architecture.md) ** | 
    <br> 
    
    [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT) 
@@ -21,7 +21,7 @@
    ![status](https://img.shields.io/badge/status-Stable-green.svg) 
  </div> 
  
- <p align="center">GoStaticServe là một máy chủ tệp tĩnh hiệu suất cao và nhẹ được phát triển bằng ngôn ngữ Go. Nó hỗ trợ các hoạt động cơ bản như tải lên, tải xuống và xóa tệp, cũng như cung cấp các tính năng như kiểm soát quyền hạn và ghi nhật ký.</p>
+ <p align="center">put-file là một máy chủ tệp tĩnh hiệu suất cao và nhẹ được phát triển bằng ngôn ngữ Go. Nó hỗ trợ các hoạt động cơ bản như tải lên, tải xuống và xóa tệp, cũng như cung cấp các tính năng như kiểm soát quyền hạn và ghi nhật ký.</p>
 
 ## Tính năng
 
@@ -41,35 +41,35 @@
 #### Cài đặt bằng Go
 
 ```bash
-go install github.com/3ziye/GoStaticServe@latest
+go install github.com/3ziye/put-file@latest
 ```
 
 #### Xây dựng từ mã nguồn
 
 ```bash
-git clone https://github.com/3ziye/GoStaticServe.git
-cd GoStaticServe
-go mod init github.com/3ziye/GoStaticServe
-go build -o GoStaticServe cmd/server/main.go
+git clone https://github.com/3ziye/put-file.git
+cd put-file
+go mod init github.com/3ziye/put-file
+go build -o put-file cmd/server/main.go
 ```
 
 #### Sử dụng tệp nhị phân đã biên dịch sẵn
 
-GoStaticServe cung cấp các tệp nhị phân đã biên dịch sẵn cho các hệ thống Linux, Windows và Mac, có thể tải xuống trực tiếp để sử dụng.
+put-file cung cấp các tệp nhị phân đã biên dịch sẵn cho các hệ thống Linux, Windows và Mac, có thể tải xuống trực tiếp để sử dụng.
 
-1. Truy cập [trang phát hành GitHub](https://github.com/3ziye/GoStaticServe/releases) và tải xuống gói tệp nhị phân tương ứng với nền tảng của bạn
+1. Truy cập [trang phát hành GitHub](https://github.com/3ziye/put-file/releases) và tải xuống gói tệp nhị phân tương ứng với nền tảng của bạn
 
 2. Giải nén các tệp tương ứng tùy thuộc vào hệ điều hành đang sử dụng:
 
    **Linux:**
    ```bash
    # Tải xuống và giải nén phiên bản cho Linux
-   wget https://github.com/3ziye/GoStaticServe/releases/download/vX.Y.Z/GoStaticServe_vX.Y.Z_linux_amd64.tar.gz
-tar -xzf GoStaticServe_vX.Y.Z_linux_amd64.tar.gz
-chmod +x GoStaticServe
+   wget https://github.com/3ziye/put-file/releases/download/vX.Y.Z/put-file_vX.Y.Z_linux_amd64.tar.gz
+tar -xzf put-file_vX.Y.Z_linux_amd64.tar.gz
+chmod +x put-file
    
    # Chạy dịch vụ
-   ./GoStaticServe
+   ./put-file
    ```
    
    **Windows:**
@@ -78,18 +78,18 @@ chmod +x GoStaticServe
    # Nhấp chuột phải vào tệp zip đã tải xuống và chọn "Giải nén tại đây"
    
    # Chạy dịch vụ
-   .\GoStaticServe.exe
+   .\put-file.exe
    ```
    
    **Mac:**
    ```bash
    # Tải xuống và giải nén phiên bản cho Mac
-   curl -OL https://github.com/3ziye/GoStaticServe/releases/download/vX.Y.Z/GoStaticServe_vX.Y.Z_darwin_amd64.tar.gz
-tar -xzf GoStaticServe_vX.Y.Z_darwin_amd64.tar.gz
-chmod +x GoStaticServe
+   curl -OL https://github.com/3ziye/put-file/releases/download/vX.Y.Z/put-file_vX.Y.Z_darwin_amd64.tar.gz
+tar -xzf put-file_vX.Y.Z_darwin_amd64.tar.gz
+chmod +x put-file
    
    # Chạy dịch vụ
-   ./GoStaticServe
+   ./put-file
    ```
 
 3. Kiểm tra thông tin phiên bản
@@ -99,14 +99,14 @@ chmod +x GoStaticServe
 
 Tải xuống hình ảnh từ Docker Hub:
 ```bash
-docker pull 3ziye/gostaticserve:latest
-docker run -p 8080:8080 -v ./files:/app/uploads 3ziye/gostaticserve:latest
+docker pull 3ziye/put-file:latest
+docker run -p 8080:8080 -v ./files:/app/uploads 3ziye/put-file:latest
 ```
 
 Tải xuống hình ảnh từ GitHub Package:
 ```bash
-docker pull ghcr.io/3ziye/gostaticserve:latest
-docker run -p 8080:8080 -v ./files:/app/uploads ghcr.io/3ziye/gostaticserve:latest
+docker pull ghcr.io/3ziye/put-file:latest
+docker run -p 8080:8080 -v ./files:/app/uploads ghcr.io/3ziye/put-file:latest
 ```
 
 ## Hình ảnh Docker từ GitHub Package
@@ -116,13 +116,13 @@ docker run -p 8080:8080 -v ./files:/app/uploads ghcr.io/3ziye/gostaticserve:late
 1. Đảm bảo rằng Docker đã được cài đặt
 2. Chạy lệnh sau để tải xuống hình ảnh:
    ```bash
-docker pull ghcr.io/3ziye/gostaticserve:latest
+docker pull ghcr.io/3ziye/put-file:latest
    ```
 
 ### Chạy hình ảnh Docker
 
 ```bash
-docker run -p 8080:8080 -v ./files:/app/uploads ghcr.io/3ziye/gostaticserve:latest
+docker run -p 8080:8080 -v ./files:/app/uploads ghcr.io/3ziye/put-file:latest
 ```
 
 Lệnh này sẽ chạy container, ánh xạ cổng 8080 của container đến cổng 8080 của máy chủ và gắn thư mục `./files` của máy chủ vào thư mục `/app/uploads` bên trong container.
@@ -136,17 +136,17 @@ docker login ghcr.io -u TÊN_TÀI_KHOẢN_GITHUB -p TOKEN_GITHUB
 
 2. Xây dựng hình ảnh:
    ```bash
-docker build -t ghcr.io/3ziye/gostaticserve:latest .
+docker build -t ghcr.io/3ziye/put-file:latest .
    ```
 
 3. Tải lên hình ảnh:
    ```bash
-docker push ghcr.io/3ziye/gostaticserve:latest
+docker push ghcr.io/3ziye/put-file:latest
    ```
 
 ## Triển khai tự động trên máy chủ
 
-GoStaticServe hỗ trợ triển khai tự động trên máy chủ từ xa thông qua GitHub Actions. Để biết các bước cấu hình chi tiết, vui lòng tham khảo [tài liệu triển khai](doc/DEPLOYMENT.md).
+put-file hỗ trợ triển khai tự động trên máy chủ từ xa thông qua GitHub Actions. Để biết các bước cấu hình chi tiết, vui lòng tham khảo [tài liệu triển khai](doc/DEPLOYMENT.md).
 
 Các tính năng chính của triển khai tự động:
 - 🔑 Quản lý thông tin xác thực máy chủ thông qua GitHub Secrets

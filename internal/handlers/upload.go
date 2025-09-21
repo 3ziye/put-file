@@ -9,10 +9,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
-	"github.com/3ziye/GoStaticServe/internal/logs"
-	"github.com/3ziye/GoStaticServe/internal/utils"
+	"github.com/3ziye/put-file/internal/logs"
 )
 
 // 检查文件扩展名是否允许
@@ -84,53 +82,8 @@ func HandleUpload(rootDir string) http.HandlerFunc {
 		return
 	}
 
-		// Display success message
-		html := fmt.Sprintf(`
-		<!DOCTYPE html>
-		<html lang="en">
-		<head>
-			<meta charset="UTF-8">
-			<title>Upload Successful</title>
-			<style>
-				body {
-					font-family: Arial, sans-serif;
-					max-width: 800px;
-					margin: 0 auto;
-					padding: 20px;
-				}
-				.container {
-					background-color: #f9f9f9;
-					padding: 20px;
-					border-radius: 8px;
-					box-shadow: 0 0 10px rgba(0,0,0,0.1);
-				}
-				.success {
-					background-color: #d4edda;
-					color: #155724;
-					padding: 10px;
-					border-radius: 4px;
-				}
-				.back {
-					margin-top: 20px;
-				}
-			</style>
-		</head>
-		<body>
-			<div class="container">
-				<h1>File Upload Successful</h1>
-				<div class="success">
-					<p>File Name: %s</p>
-					<p>File Size: %d bytes</p>
-					<p>Access URL: <a href="/files/%s">/files/%s</a></p>
-				</div>
-				<div class="back">
-					<a href="/">Back to Upload Page</a>
-				</div>
-			</div>
-		</body>
-		</html>
-		`, safeFilename, handler.Size, safeFilename, safeFilename)
-
-		fmt.Fprint(w, html)
+		// 重定向回首页并带上成功状态参数
+		w.Header().Set("Location", fmt.Sprintf("/?status=success&message=文件上传成功：%s", safeFilename))
+		w.WriteHeader(http.StatusFound)
 	}
 }

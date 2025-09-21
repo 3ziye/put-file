@@ -8,14 +8,51 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
-	"time"
 
-	"github.com/3ziye/GoStaticServe/internal/auth"
-	"github.com/3ziye/GoStaticServe/internal/logs"
-	"github.com/3ziye/GoStaticServe/internal/models"
+	"github.com/3ziye/put-file/internal/auth"
+	"github.com/3ziye/put-file/internal/logs"
+	"github.com/3ziye/put-file/internal/models"
 )
+
+// HandleAuthVerify handles authentication verification requests
+func HandleAuthVerify(validUsers map[string]models.User) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			SendAPIResponse(w, false, "Only GET requests are supported", nil, http.StatusMethodNotAllowed)
+			return
+		}
+
+		// Get Authorization header
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			SendAPIResponse(w, false, "Authorization header is required", nil, http.StatusUnauthorized)
+			return
+		}
+
+		// Parse Basic Auth
+		const prefix = "Basic "
+		if !strings.HasPrefix(authHeader, prefix) {
+			SendAPIResponse(w, false, "Invalid authorization format", nil, http.StatusUnauthorized)
+			return
+		}
+
+		// Validate user credentials
+		username, password, ok := r.BasicAuth()
+		if !ok {
+			SendAPIResponse(w, false, "Invalid authorization credentials", nil, http.StatusUnauthorized)
+			return
+		}
+
+		// Verify username and password
+		if auth.ValidateCredentials(username, password, validUsers) {
+			SendAPIResponse(w, true, "Authentication successful", map[string]string{"username": username}, http.StatusOK)
+			return
+		}
+
+		SendAPIResponse(w, false, "Invalid username or password", nil, http.StatusUnauthorized)
+	}
+}
 
 // HandleLogin Handle login requests
 func HandleLogin(validUsers map[string]models.User) http.HandlerFunc {
@@ -90,7 +127,7 @@ func HandleAPIUpload(rootDir string) http.HandlerFunc {
 		defer dst.Close()
 
 		// Copy file content
-		size, err := file.ReadFrom(file)
+		size, err := io.Copy(dst, file)
 		if err != nil {
 			logs.Error("Failed to save file: %v", err)
 			SendAPIResponse(w, false, "Failed to save file: "+err.Error(), nil, http.StatusInternalServerError)

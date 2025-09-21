@@ -3,12 +3,11 @@
 package auth
 
 import (
-	"crypto/subtle"
 	"net/http"
 	"strings"
 
-	"github.com/3ziye/GoStaticServe/internal/logs"
-	"github.com/3ziye/GoStaticServe/internal/models"
+	"github.com/3ziye/put-file/internal/logs"
+	"github.com/3ziye/put-file/internal/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -59,13 +58,11 @@ func (am *AuthMiddleware) MiddlewareFunc(next http.HandlerFunc) http.HandlerFunc
 				return
 			}
 
-			// Verify username and password
-			if user, exists := am.validUsers[username]; exists {
-				if subtle.ConstantTimeCompare([]byte(password), []byte(user.Password)) == 1 {
-					// Authentication successful, continue processing the request
-					next(w, r)
-					return
-				}
+			// Verify username and password using ValidateCredentials
+			if ValidateCredentials(username, password, am.validUsers) {
+				// Authentication successful, continue processing the request
+				next(w, r)
+				return
 			}
 
 			// Authentication failed

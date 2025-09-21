@@ -44,7 +44,7 @@ jobs:
           GOARCH: ${{ matrix.goarch }}
           CGO_ENABLED: 0
         run: |
-          BINARY_NAME=GoStaticServe
+          BINARY_NAME=put-file
           if [ "${{ matrix.goos }}" = "windows" ]; then
             BINARY_NAME="${BINARY_NAME}.exe"
           fi
@@ -76,7 +76,7 @@ jobs:
 
       - name: Create release archive
         run: |
-          ARCHIVE_NAME="GoStaticServe_${{ env.VERSION }}_${{ matrix.goos }}_${{ matrix.goarch }}"
+          ARCHIVE_NAME="put-file_${{ env.VERSION }}_${{ matrix.goos }}_${{ matrix.goarch }}"
           if [ "${{ matrix.goos }}" = "windows" ]; then
             ARCHIVE_NAME="${ARCHIVE_NAME}.zip"
             cd release && zip -r ../$ARCHIVE_NAME . && cd ..
@@ -88,8 +88,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: GoStaticServe_${{ matrix.goos }}_${{ matrix.goarch }}
-          path: GoStaticServe_${{ env.VERSION }}_${{ matrix.goos }}_${{ matrix.goarch }}*
+          name: put-file_${{ matrix.goos }}_${{ matrix.goarch }}
+          path: put-file_${{ env.VERSION }}_${{ matrix.goos }}_${{ matrix.goarch }}*
 
   create-release:
     needs: build
@@ -113,7 +113,7 @@ jobs:
         with:
           name: Release v${{ env.VERSION }}
           body: |
-            ## GoStaticServe v${{ env.VERSION }}
+            ## put-file v${{ env.VERSION }}
             高性能、轻量级的静态文件服务器
             
             ### 更新内容

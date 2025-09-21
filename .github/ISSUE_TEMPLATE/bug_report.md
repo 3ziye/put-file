@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug or issue with GoStaticServe
+about: Report a bug or issue with put-file
 title: '[Bug] Short description of the issue'
 labels: 'bug'
 assignees: ''
@@ -24,7 +24,7 @@ If applicable, add screenshots to help explain your problem.
 
 ## Environment
 - OS: [e.g. Windows, macOS, Linux]
-- GoStaticServe Version: [e.g. v1.0.0]
+- put-file Version: [e.g. v1.0.0]
 - Go Version: [e.g. 1.21]
 - Browser (if applicable): [e.g. Chrome, Firefox]
 

@@ -1,48 +1,48 @@
 @echo off
 
-REM GoStaticServe Windows 安装脚本
+REM put-file Windows Installation Script
 
-REM 设置安装目录
-sets INSTALL_DIR=%USERPROFILE%\GoStaticServe
+REM Set installation directory
+set INSTALL_DIR=%USERPROFILE%\put-file
 
 echo ======================================
-echo GoStaticServe 安装脚本
+echo put-file Installation Script
 
-echo 此脚本将在 %INSTALL_DIR% 安装 GoStaticServe
+echo This script will install put-file in %INSTALL_DIR%
 
-echo 安装过程中可能需要管理员权限。
+echo Administrator privileges may be required during installation.
 echo ======================================
 
-REM 创建安装目录
+REM Create installation directory
 if not exist "%INSTALL_DIR%" mkdir "%INSTALL_DIR%"
 
-REM 复制文件到安装目录
-echo 复制文件到安装目录...
-copy GoStaticServe.exe "%INSTALL_DIR%"
+REM Copy files to installation directory
+echo Copying files to installation directory...
+copy put-file.exe "%INSTALL_DIR%"
 copy config.json.example "%INSTALL_DIR%\config.json"
 copy README.md "%INSTALL_DIR%"
 xcopy /s web "%INSTALL_DIR%\web"
 xcopy /s doc "%INSTALL_DIR%\doc"
 
-REM 创建uploads目录
+REM Create uploads directory
 if not exist "%INSTALL_DIR%\uploads" mkdir "%INSTALL_DIR%\uploads"
 
-echo 安装完成！
+echo Installation completed!
 echo 
 
-echo 配置说明：
-echo - 配置文件位于 %INSTALL_DIR%\config.json
+echo Configuration notes:
+echo - Configuration file is located at %INSTALL_DIR%\config.json
 
-echo 使用方法：
-echo 1. 打开命令提示符
+echo Usage:
+echo 1. Open Command Prompt
 
-echo 2. 运行以下命令启动服务器：
+echo 2. Run the following commands to start the server:
 echo    cd %INSTALL_DIR%
-echo    GoStaticServe.exe
+echo    put-file.exe
 
-echo 3. 打开浏览器访问 http://localhost:8080
+echo 3. Open browser and visit http://localhost:8080
 
-echo 如需修改默认端口或其他配置，请编辑 config.json 文件。
+echo To modify default port or other configurations, please edit the config.json file.
 echo ======================================
 
 pause

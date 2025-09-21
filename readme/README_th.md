@@ -1,15 +1,15 @@
 <h1 align="center" style="border-bottom: none"> 
      <a href="" target="_blank"> 
-         <alt="GoStaticServe" src="" width="100" height="100"> 
+         <alt="put-file" src="" width="100" height="100"> 
      </a> 
-     <br>GoStaticServe 
+     <br>put-file 
  </h1> 
  
  <div align="center" style="line-height: 2;"> 
    [<a href="/README.md">English</a>] | [<a href="/readme/README_ar.md">العربية</a>] | [<a href="/readme/README_da.md">Dansk</a>] | [<a href="/readme/README_de.md">Deutsch</a>] | [<a href="/readme/README_es.md">Español</a>] | [<a href="/readme/README_fr.md">Français</a>] | [<a href="/readme/README_it.md">Italiano</a>] | [<a href="/readme/README_ja.md">日本語</a>] | [<a href="/readme/README_ko.md">한국어</a>] | [<a href="/readme/README_nl.md">Nederlands</a>] | [<a href="/readme/README_no.md">Norsk</a>] | [<a href="/readme/README_pl.md">Polski</a>] | [<a href="/readme/README_pt.md">Português</a>] | [<a href="/readme/README_ru.md">Русский</a>] | [<a href="/readme/README_sv.md">Svenska</a>] | [<a href="/readme/README_th.md">ไทย</a>] | [<a href="/readme/README_vi.md">Tiếng Việt</a>] | [<a href="/readme/README_zh.md">中文(简体)</a>] 
    <br> 
    
-   | ** [Issues](https://github.com/3ziye/GoStaticServe/issues) ** | ** [Releases](https://github.com/3ziye/GoStaticServe/releases) ** | ** [README](https://github.com/3ziye/GoStaticServe/blob/main/README.md) ** | ** [Architecture](https://github.com/3ziye/GoStaticServe/blob/main/doc/architecture.md) ** | 
+   | ** [Issues](https://github.com/3ziye/put-file/issues) ** | ** [Releases](https://github.com/3ziye/put-file/releases) ** | ** [README](https://github.com/3ziye/put-file/blob/main/README.md) ** | ** [Architecture](https://github.com/3ziye/put-file/blob/main/doc/architecture.md) ** | 
    <br> 
    
    [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT) 
@@ -21,7 +21,7 @@
    ![status](https://img.shields.io/badge/status-Stable-green.svg) 
  </div> 
  
- <p align="center">GoStaticServe เป็นเซิร์ฟเวอร์ไฟล์แบบคงที่ที่มีประสิทธิภาพสูงและเบากว่าที่พัฒนาด้วยภาษา Go มันสนับสนุนการทำงานพื้นฐาน เช่น อัปโหลด ดาวน์โหลด และลบไฟล์ และยังให้คุณสมบัติต่างๆ เช่น การควบคุมสิทธิ์และบันทึก日志</p>
+ <p align="center">put-file เป็นเซิร์ฟเวอร์ไฟล์แบบคงที่ที่มีประสิทธิภาพสูงและเบากว่าที่พัฒนาด้วยภาษา Go มันสนับสนุนการทำงานพื้นฐาน เช่น อัปโหลด ดาวน์โหลด และลบไฟล์ และยังให้คุณสมบัติต่างๆ เช่น การควบคุมสิทธิ์และบันทึก日志</p>
 
 ## คุณสมบัติ
 
@@ -41,35 +41,35 @@
 #### ติดตั้งโดยใช้ Go
 
 ```bash
-go install github.com/3ziye/GoStaticServe@latest
+go install github.com/3ziye/put-file@latest
 ```
 
 #### สร้างจากโค้ดต้นฉบับ
 
 ```bash
-git clone https://github.com/3ziye/GoStaticServe.git
-cd GoStaticServe
-go mod init github.com/3ziye/GoStaticServe
-go build -o GoStaticServe cmd/server/main.go
+git clone https://github.com/3ziye/put-file.git
+cd put-file
+go mod init github.com/3ziye/put-file
+go build -o put-file cmd/server/main.go
 ```
 
 #### 使用แฟ้มไบนารีที่คอมไพล์ไว้ก่อนหน้า
 
-GoStaticServe ให้แฟ้มไบนารีที่คอมไพล์ไว้ก่อนหน้าสำหรับระบบ Linux Windows และ Mac ซึ่งสามารถดาวน์โหลดโดยตรงเพื่อใช้งานได้
+put-file ให้แฟ้มไบนารีที่คอมไพล์ไว้ก่อนหน้าสำหรับระบบ Linux Windows และ Mac ซึ่งสามารถดาวน์โหลดโดยตรงเพื่อใช้งานได้
 
-1. เยี่ยมชม [หน้าเผยแพร่ของ GitHub](https://github.com/3ziye/GoStaticServe/releases) และดาวน์โหลดแพ็คเกจไฟล์ไบนารีที่ตรงกับแพลตฟอร์มของคุณ
+1. เยี่ยมชม [หน้าเผยแพร่ของ GitHub](https://github.com/3ziye/put-file/releases) และดาวน์โหลดแพ็คเกจไฟล์ไบนารีที่ตรงกับแพลตฟอร์มของคุณ
 
 2. แตกไฟล์ที่เกี่ยวข้องตามระบบปฏิบัติการที่ใช้:
 
    **Linux:**
    ```bash
    # ดาวน์โหลดและแตกไฟล์เวอร์ชันสำหรับ Linux
-   wget https://github.com/3ziye/GoStaticServe/releases/download/vX.Y.Z/GoStaticServe_vX.Y.Z_linux_amd64.tar.gz
-tar -xzf GoStaticServe_vX.Y.Z_linux_amd64.tar.gz
-chmod +x GoStaticServe
+   wget https://github.com/3ziye/put-file/releases/download/vX.Y.Z/put-file_vX.Y.Z_linux_amd64.tar.gz
+tar -xzf put-file_vX.Y.Z_linux_amd64.tar.gz
+chmod +x put-file
    
    # รันบริการ
-   ./GoStaticServe
+   ./put-file
    ```
    
    **Windows:**
@@ -78,18 +78,18 @@ chmod +x GoStaticServe
    # คลิกขวาที่ไฟล์ zip ที่ดาวน์โหลดแล้วเลือก "Extract here"
    
    # รันบริการ
-   .\GoStaticServe.exe
+   .\put-file.exe
    ```
    
    **Mac:**
    ```bash
    # ดาวน์โหลดและแตกไฟล์เวอร์ชันสำหรับ Mac
-   curl -OL https://github.com/3ziye/GoStaticServe/releases/download/vX.Y.Z/GoStaticServe_vX.Y.Z_darwin_amd64.tar.gz
-tar -xzf GoStaticServe_vX.Y.Z_darwin_amd64.tar.gz
-chmod +x GoStaticServe
+   curl -OL https://github.com/3ziye/put-file/releases/download/vX.Y.Z/put-file_vX.Y.Z_darwin_amd64.tar.gz
+tar -xzf put-file_vX.Y.Z_darwin_amd64.tar.gz
+chmod +x put-file
    
    # รันบริการ
-   ./GoStaticServe
+   ./put-file
    ```
 
 3. ตรวจสอบข้อมูลเวอร์ชัน
@@ -99,14 +99,14 @@ chmod +x GoStaticServe
 
 ดาวน์โหลดภาพจาก Docker Hub:
 ```bash
-docker pull 3ziye/gostaticserve:latest
-docker run -p 8080:8080 -v ./files:/app/uploads 3ziye/gostaticserve:latest
+docker pull 3ziye/put-file:latest
+docker run -p 8080:8080 -v ./files:/app/uploads 3ziye/put-file:latest
 ```
 
 ดาวน์โหลดภาพจาก GitHub Package:
 ```bash
-docker pull ghcr.io/3ziye/gostaticserve:latest
-docker run -p 8080:8080 -v ./files:/app/uploads ghcr.io/3ziye/gostaticserve:latest
+docker pull ghcr.io/3ziye/put-file:latest
+docker run -p 8080:8080 -v ./files:/app/uploads ghcr.io/3ziye/put-file:latest
 ```
 
 ## ภาพ Docker จาก GitHub Package
@@ -116,13 +116,13 @@ docker run -p 8080:8080 -v ./files:/app/uploads ghcr.io/3ziye/gostaticserve:late
 1. ตรวจสอบให้แน่ใจว่า Docker ถูกติดตั้ง
 2. รันคำสั่งต่อไปนี้เพื่อดาวน์โหลดภาพ:
    ```bash
-docker pull ghcr.io/3ziye/gostaticserve:latest
+docker pull ghcr.io/3ziye/put-file:latest
    ```
 
 ### รันภาพ Docker
 
 ```bash
-docker run -p 8080:8080 -v ./files:/app/uploads ghcr.io/3ziye/gostaticserve:latest
+docker run -p 8080:8080 -v ./files:/app/uploads ghcr.io/3ziye/put-file:latest
 ```
 
 คำสั่งนี้จะรันคอนเทนเนอร์ แมปพอร์ต 8080 ของคอนเทนเนอร์ไปยังพอร์ต 8080 ของโฮสต์ และเมานท์ไดเร็กทอรี `./files` ของโฮสต์ไปยังไดเร็กทอรี `/app/uploads` ภายในคอนเทนเนอร์
@@ -136,17 +136,17 @@ docker login ghcr.io -u ชื่อผู้ใช้GitHub -p โทเคนG
 
 2. สร้างภาพ:
    ```bash
-docker build -t ghcr.io/3ziye/gostaticserve:latest .
+docker build -t ghcr.io/3ziye/put-file:latest .
    ```
 
 3. อัปโหลดภาพ:
    ```bash
-docker push ghcr.io/3ziye/gostaticserve:latest
+docker push ghcr.io/3ziye/put-file:latest
    ```
 
 ## การปรับใช้อัตโนมัติในเซิร์ฟเวอร์
 
-GoStaticServe รองรับการปรับใช้อัตโนมัติในเซิร์ฟเวอร์ระยะไกลผ่าน GitHub Actions สำหรับขั้นตอนการตั้งค่าโดยละเอียด โปรดดู [เอกสารการปรับใช้](doc/DEPLOYMENT.md)
+put-file รองรับการปรับใช้อัตโนมัติในเซิร์ฟเวอร์ระยะไกลผ่าน GitHub Actions สำหรับขั้นตอนการตั้งค่าโดยละเอียด โปรดดู [เอกสารการปรับใช้](doc/DEPLOYMENT.md)
 
 คุณสมบัติหลักของการปรับใช้อัตโนมัติ:
 - 🔑 จัดการข้อมูลประจำตัวเซิร์ฟเวอร์ผ่าน GitHub Secrets

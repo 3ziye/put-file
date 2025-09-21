@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单认证测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; }
+        .result { margin-top: 1rem; padding: 1rem; border: 1px solid #ddd; min-height: 100px; }
+        button { margin-right: 10px; padding: 8px 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>简单认证测试</h1>
+    
+    <div>
+        <button id="testBtn">测试文件列表API</button>
+    </div>
+    
+    <div class="result" id="result"></div>
+    
+    <script>
+        const resultDiv = document.getElementById('result');
+        
+        // 显示结果
+        function showResult(text, isError = false) {
+            resultDiv.innerHTML = `<pre style="color: ${isError ? 'red' : 'green'}">${text}</pre>`;
+        }
+        
+        // 测试文件列表API（使用硬编码的Basic Auth）
+        document.getElementById('testBtn').addEventListener('click', async () => {
+            try {
+                // 硬编码的认证头 (admin:admin123 的Base64编码)
+                const authHeader = 'Basic YWRtaW46YWRtaW4xMjM=';
+                showResult(`使用的认证头: ${authHeader}`);
+                
+                const response = await fetch('/api/files', {
+                    headers: { 'Authorization': authHeader }
+                });
+                
+                const headers = {};
+                response.headers.forEach((value, key) => {
+                    headers[key] = value;
+                });
+                
+                const responseText = await response.text();
+                let parsedData = '无法解析JSON响应';
+                try {
+                    parsedData = JSON.stringify(JSON.parse(responseText), null, 2);
+                } catch (e) {
+                    parsedData = responseText;
+                }
+                
+                showResult(`状态码: ${response.status}\n\n响应头:\n${JSON.stringify(headers, null, 2)}\n\n响应体:\n${parsedData}`);
+            } catch (error) {
+                showResult(`错误: ${error.message}`, true);
+            }
+        });
+    </script>
+</body>
+</html>

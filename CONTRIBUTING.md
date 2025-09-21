@@ -1,6 +1,6 @@
 # Contribution Guidelines
 
-Thank you for considering contributing to the GoStaticServe project! This document provides guidelines and best practices for participating in this project, helping you get started quickly and effectively contribute to the project.
+Thank you for considering contributing to the put-file project! This document provides guidelines and best practices for participating in this project, helping you get started quickly and effectively contribute to the project.
 
 ## Table of Contents
 
@@ -85,13 +85,13 @@ To maintain code consistency and readability, we require all code to follow thes
 
 ## PR Submission Process
 
-1. **Fork the Repository**: Fork the GoStaticServe repository on GitHub to your own account
+1. **Fork the Repository**: Fork the put-file repository on GitHub to your own account
 
 2. **Clone the Repository**: Clone the forked repository to your local machine
 
    ```bash
-   git clone https://github.com/YOUR_USERNAME/GoStaticServe.git
-   cd GoStaticServe
+   git clone https://github.com/YOUR_USERNAME/put-file.git
+   cd put-file
    ```
 
 3. **Create a Branch**: Create a new branch for your changes
@@ -136,4 +136,4 @@ If you encounter any issues during the contribution process, you can get help th
 - Submitting an issue on GitHub
 - Contacting project maintainers
 
-Thank you for your support and contributions to the GoStaticServe project!
+Thank you for your support and contributions to the put-file project!

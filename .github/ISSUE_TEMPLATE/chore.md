@@ -1,6 +1,6 @@
 ---
 name: Chore
-about: Describe maintenance tasks for GoStaticServe
+about: Describe maintenance tasks for put-file
 title: '[Chore] Short description of the task'
 labels: 'chore'
 assignees: ''

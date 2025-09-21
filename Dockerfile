@@ -14,7 +14,7 @@ RUN go mod download || echo "No dependencies to download"
 COPY . .
 
 # Compile Go program
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o GoStaticServe cmd/server/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o put-file cmd/server/main.go
 
 # Use Alpine as runtime environment
 FROM alpine:3.18
@@ -29,7 +29,7 @@ RUN adduser -D -g 'app' appuser
 WORKDIR /app
 
 # Copy compiled binary from build stage
-COPY --from=builder /app/GoStaticServe .
+COPY --from=builder /app/put-file .
 
 # Create upload directory and set permissions
 RUN mkdir -p /app/uploads && chown -R appuser:appuser /app/uploads
@@ -49,4 +49,4 @@ ENV SERVER_LOG_LEVEL=INFO
 ENV SERVER_LOG_FILE=
 
 # Run command, using environment variables as parameters
-CMD ["sh", "-c", "./GoStaticServe --port=$SERVER_PORT --root=$SERVER_ROOT --username=$SERVER_USERNAME --password=$SERVER_PASSWORD --log-level=$SERVER_LOG_LEVEL --log-file=$SERVER_LOG_FILE"]
+CMD ["sh", "-c", "./put-file --port=$SERVER_PORT --root=$SERVER_ROOT --username=$SERVER_USERNAME --password=$SERVER_PASSWORD --log-level=$SERVER_LOG_LEVEL --log-file=$SERVER_LOG_FILE"]

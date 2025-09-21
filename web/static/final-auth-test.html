@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最终认证测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; line-height: 1.6; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .card { border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+        h1 { color: #333; margin-bottom: 1.5rem; }
+        h2 { color: #555; margin-top: 1.5rem; margin-bottom: 1rem; font-size: 1.2rem; }
+        button { padding: 8px 16px; margin-right: 10px; cursor: pointer; background-color: #4a90e2; color: white; border: none; border-radius: 4px; }
+        .result { margin-top: 1rem; padding: 1rem; border: 1px solid #ddd; min-height: 100px; font-family: monospace; white-space: pre-wrap; }
+        .success { background-color: #e8f5e9; border-color: #c8e6c9; color: #2e7d32; }
+        .error { background-color: #ffebee; border-color: #ffcdd2; color: #c62828; }
+        .info { background-color: #e3f2fd; border-color: #bbdefb; color: #1565c0; }
+        .credentials { margin-top: 1rem; padding: 10px; background-color: #f5f5f5; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>最终认证测试</h1>
+        
+        <div class="card">
+            <h2>服务器信息</h2>
+            <div class="credentials">
+                <p><strong>配置的用户名:</strong> admin</p>
+                <p><strong>配置的密码:</strong> admin123</p>
+                <p><strong>使用的认证方式:</strong> Basic Auth</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>测试功能</h2>
+            <button id="testAuthBtn">测试认证</button>
+            <button id="testFilesBtn">获取文件列表</button>
+            <div class="result" id="result"></div>
+        </div>
+        
+        <div class="card">
+            <h2>测试说明</h2>
+            <p>此页面用于测试文件服务器的认证功能是否正常工作。</p>
+            <p>点击"测试认证"按钮将使用硬编码的admin/admin123凭据访问API端点。</p>
+            <p>点击"获取文件列表"按钮将尝试获取当前服务器上的文件列表。</p>
+            <p>如果认证成功，您将看到成功的响应；如果失败，将显示详细的错误信息。</p>
+        </div>
+    </div>
+    
+    <script>
+        const resultDiv = document.getElementById('result');
+        const testAuthBtn = document.getElementById('testAuthBtn');
+        const testFilesBtn = document.getElementById('testFilesBtn');
+        
+        // 显示结果
+        function showResult(text, type = 'info') {
+            resultDiv.textContent = text;
+            resultDiv.className = 'result ' + type;
+        }
+        
+        // 创建Basic认证头
+        function createAuthHeader(username, password) {
+            return 'Basic ' + btoa(username + ':' + password);
+        }
+        
+        // 测试认证
+        testAuthBtn.addEventListener('click', async () => {
+            try {
+                const username = 'admin';
+                const password = 'admin123';
+                const authHeader = createAuthHeader(username, password);
+                
+                showResult(`使用凭据: ${username}:${password}\n认证头: ${authHeader}\n\n正在发送认证请求...`);
+                
+                const response = await fetch('/api/files', {
+                    method: 'GET',
+                    headers: { 'Authorization': authHeader }
+                });
+                
+                const headers = {};
+                response.headers.forEach((value, key) => {
+                    headers[key] = value;
+                });
+                
+                const responseText = await response.text();
+                let parsedData = '无法解析JSON响应';
+                try {
+                    parsedData = JSON.stringify(JSON.parse(responseText), null, 2);
+                } catch (e) {
+                    parsedData = responseText;
+                }
+                
+                const result = 
+                    `认证请求结果:\n` +
+                    `状态码: ${response.status} (${response.status === 200 ? '成功' : '失败'})\n\n` +
+                    `响应头:\n${JSON.stringify(headers, null, 2)}\n\n` +
+                    `响应体:\n${parsedData}`;
+                
+                showResult(result, response.status === 200 ? 'success' : 'error');
+            } catch (error) {
+                showResult(`请求失败: ${error.message}`, 'error');
+            }
+        });
+        
+        // 测试文件列表
+        testFilesBtn.addEventListener('click', async () => {
+            try {
+                const username = 'admin';
+                const password = 'admin123';
+                const authHeader = createAuthHeader(username, password);
+                
+                showResult(`正在获取文件列表...`);
+                
+                const response = await fetch('/api/files', {
+                    method: 'GET',
+                    headers: { 'Authorization': authHeader }
+                });
+                
+                if (!response.ok) {
+                    showResult(`获取文件列表失败: 状态码 ${response.status}`, 'error');
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    const filesInfo = data.data.length > 0 
+                        ? data.data.map(file => `${file.name} (${formatFileSize(file.size)}) - ${new Date(file.created_at).toLocaleString()}`).join('\n')
+                        : '暂无文件';
+                    
+                    showResult(`文件列表获取成功!\n\n共 ${data.data.length} 个文件:\n${filesInfo}`, 'success');
+                } else {
+                    showResult(`获取文件列表失败: ${JSON.stringify(data)}`, 'error');
+                }
+            } catch (error) {
+                showResult(`获取文件列表失败: ${error.message}`, 'error');
+            }
+        });
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>

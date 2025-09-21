@@ -14,9 +14,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/3ziye/GoStaticServe/internal/auth"
-	"github.com/3ziye/GoStaticServe/internal/handlers"
-	"github.com/3ziye/GoStaticServe/internal/models"
+	"github.com/3ziye/put-file/internal/auth"
+	"github.com/3ziye/put-file/internal/handlers"
+	"github.com/3ziye/put-file/internal/models"
 )
 
 // Test login functionality

@@ -1,165 +1,163 @@
-# 文件服务器架构文档
+# File Server Architecture Document
 
-本文档介绍文件服务器项目的整体架构设计、模块划分和各组件之间的关系，帮助开发者理解项目结构和工作原理。
+This document describes the overall architecture design, module division, and relationships between components of the file server project, helping developers understand the project structure and working principles.
 
-## 项目架构概述
+## Project Architecture Overview
 
-文件服务器采用典型的Go语言Web应用架构，遵循关注点分离原则，将功能划分为多个独立的模块。整体架构如下：
+The file server adopts a typical Go language Web application architecture, following the principle of separation of concerns, dividing functions into multiple independent modules. The overall architecture is as follows:
 
 ```
 ┌─────────────────────────────────────┐
-│             HTTP 层                 │
-│  (cmd/server/main.go - 路由处理)    │
+│             HTTP Layer              │
+│  (cmd/server/main.go - Routing)     │
 └───────────────┬─────────────────────┘
                 │
 ┌───────────────┼─────────────────────┐
 │               │                     │
 ▼               ▼                     ▼
 ┌───────────┐ ┌───────────┐ ┌────────────────┐
-│   处理层   │ │  认证层   │ │    配置层      │
+│ Handler   │ │ Auth      │ │    Config      │
 │ handlers  │ │   auth    │ │    config      │
 └─────┬─────┘ └───────────┘ └────────────────┘
       │
       │
       ▼
 ┌───────────┐ ┌───────────┐ ┌───────────┐
-│   模型层   │ │   工具层   │ │   日志层   │
+│  Model    │ │  Utility  │ │  Logging  │
 │  models   │ │   utils   │ │   logs    │
 └───────────┘ └───────────┘ └───────────┘
 ```
 
-## 目录结构详解
+## Directory Structure Details
 
-项目采用标准的Go项目目录结构，主要包含以下几个部分：
+The project adopts a standard Go project directory structure, mainly including the following parts:
 
 ### cmd/server/
 
-应用程序的入口点，包含`main.go`文件，负责：
-- 解析命令行参数和环境变量
-- 加载配置文件
-- 初始化各个组件
-- 设置HTTP路由和中间件
-- 启动Web服务器
+The entry point of the application, containing the `main.go` file, responsible for:
+- Parsing command-line arguments and environment variables
+- Loading configuration files
+- Initializing various components
+- Setting up HTTP routes and middleware
+- Starting the web server
 
 ### internal/
 
-内部包目录，包含项目的核心功能实现。根据Go语言的惯例，这些包不会被外部项目导入。
+Internal package directory containing the core functionality implementation of the project. According to Go language conventions, these packages will not be imported by external projects.
 
 #### internal/auth/
 
-实现身份验证相关功能，主要包含：
+Implements authentication-related functionality, mainly including:
+- Basic authentication middleware
+- User credential verification functions
 
 #### internal/logs/
 
-实现统一的日志系统，支持不同日志级别和文件输出，主要包含：
-- Logger 接口定义
-- 日志级别控制
-- 日志输出格式化
+Implements a unified logging system, supporting different log levels and file output, mainly including:
+- Logger interface definition
+- Log level control
+- Log output formatting
 
 #### internal/models/
 
-定义数据模型和结构，主要包含：
-- Basic认证中间件
-- 用户凭据验证功能
+Defines data models and structures, mainly including:
+- User: User model
+- APIResponse: Unified API response format
+- FileInfo: File information model
 
 #### internal/config/
 
-负责配置加载和管理，支持从多种来源读取配置：
-- 配置文件（JSON格式）
-- 环境变量
-- 命令行参数
+Responsible for configuration loading and management, supporting reading configuration from multiple sources:
+- Configuration files (JSON format)
+- Environment variables
+- Command-line parameters
 
 #### internal/handlers/
 
-实现HTTP请求处理程序，处理各种HTTP请求：
-- Web界面文件上传
-- API接口处理（登录、文件上传、文件列表、文件删除）
-- 统一的API响应处理
-
-#### internal/models/
-
-定义数据模型，包含项目中使用的各种结构体：
-- User：用户模型
-- APIResponse：统一的API响应格式
-- FileInfo：文件信息模型
+Implements HTTP request handlers, processing various HTTP requests:
+- Web interface file upload
+- API interface processing (login, file upload, file list, file deletion)
+- Unified API response processing
 
 #### internal/utils/
 
-提供通用的工具函数，如目录创建等基础功能。
+Provides common utility functions, such as directory creation and other basic functions.
 
 ### tests/
 
-包含项目的测试文件，用于验证各个组件的功能。
+Contains project test files, used to verify the functionality of various components.
 
 ### doc/
 
-包含项目的文档，如API文档、架构文档等。
+Contains project documentation, such as API documentation, architecture documentation, etc.
 
-## 核心流程
+## Core Processes
 
-### 1. 服务器启动流程
+### Core Processes
 
-1. 解析命令行参数
-2. 加载配置文件
-3. 应用环境变量覆盖配置
-4. 应用命令行参数覆盖配置
-5. 初始化用户信息
-6. 确保上传目录存在
-7. 创建认证中间件
-8. 设置HTTP路由
-9. 启动Web服务器
+### 1. Server Startup Process
 
-### 2. 文件上传流程
+1. Parse command-line arguments
+2. Load configuration files
+3. Apply environment variable overrides
+4. Apply command-line argument overrides
+5. Initialize user information
+6. Ensure upload directory exists
+7. Create authentication middleware
+8. Set up HTTP routes
+9. Start the web server
 
-#### Web界面上传
-1. 用户访问上传页面
-2. 选择文件并点击上传按钮
-3. 服务器接收文件并保存到指定目录
-4. 返回上传成功页面
+### 2. File Upload Process
 
-#### API上传
-1. 客户端发送带有Basic认证的POST请求
-2. 认证中间件验证用户凭据
-3. 服务器接收文件并保存到指定目录
-4. 返回JSON格式的响应
+#### Web Interface Upload
+1. User accesses the upload page
+2. Selects a file and clicks the upload button
+3. Server receives the file and saves it to the specified directory
+4. Returns an upload success page
 
-### 3. 文件访问流程
+#### API Upload
+1. Client sends a POST request with Basic authentication
+2. Authentication middleware verifies user credentials
+3. Server receives the file and saves it to the specified directory
+4. Returns a JSON format response
 
-1. 用户通过浏览器访问文件URL（/files/文件名）
-2. 服务器查找并返回对应的文件
-3. 如果文件不存在，返回404错误
+### 3. File Access Process
 
-## 配置管理
+1. User accesses the file URL through a browser (/files/filename)
+2. Server finds and returns the corresponding file
+3. If the file does not exist, returns a 404 error
 
-文件服务器支持三级配置优先级：
-1. 命令行参数（最高优先级）
-2. 环境变量
-3. 配置文件
-4. 默认配置（最低优先级）
+## Configuration Management
 
-这种设计使得用户可以根据自己的需求灵活地配置服务器，既可以通过配置文件进行持久化配置，也可以通过环境变量或命令行参数进行临时配置。
+The file server supports three levels of configuration priority:
+1. Command-line arguments (highest priority)
+2. Environment variables
+3. Configuration files
+4. Default configuration (lowest priority)
 
-## 安全考虑
+This design allows users to flexibly configure the server according to their needs, either through persistent configuration via configuration files or temporary configuration through environment variables or command-line arguments.
 
-1. **身份验证**：API接口使用Basic认证保护，防止未授权访问
-2. **权限控制**：目前实现了简单的基于用户名和密码的访问控制
-3. **文件大小限制**：上传文件大小限制为10MB，可以在代码中调整
-4. **路径安全**：使用`filepath.Join`和标准库函数处理文件路径，防止路径遍历攻击
+## Security Considerations
 
-## 扩展性考虑
+1. **Authentication**: API interfaces are protected using Basic authentication to prevent unauthorized access
+2. **Access Control**: Currently implements simple username and password-based access control
+3. **File Size Limit**: Upload file size is limited to 10MB, which can be adjusted in the code
+4. **Path Security**: Uses `filepath.Join` and standard library functions to handle file paths, preventing path traversal attacks
 
-项目的模块化设计使其具有良好的扩展性，可以方便地添加新功能：
+## Scalability Considerations
 
-1. **添加新的API接口**：只需在`internal/handlers/`目录下添加新的处理函数，并在`main.go`中注册路由
-2. **修改认证方式**：可以扩展`internal/auth/`包，实现更复杂的认证方式
-3. **添加新的配置项**：只需在`internal/config/config.go`中的Config结构体中添加新字段，并在相关代码中使用
+The project's modular design gives it good scalability, allowing for easy addition of new features:
 
-## 性能优化
+1. **Adding new API interfaces**: Simply add new handler functions in the `internal/handlers/` directory and register routes in `main.go`
+2. **Modifying authentication methods**: Can extend the `internal/auth/` package to implement more complex authentication methods
+3. **Adding new configuration items**: Simply add new fields to the Config struct in `internal/config/config.go` and use them in relevant code
 
-1. **静态文件服务**：使用Go标准库的`http.FileServer`处理静态文件，性能良好
-2. **内存限制**：解析multipart/form-data时设置了内存限制，防止内存溢出
-3. **并发处理**：Go的HTTP服务器默认支持并发处理请求，无需额外配置
+## Performance Optimization
 
-## 监控与维护
+1. **Static File Service**: Uses Go standard library's `http.FileServer` to handle static files with good performance
+2. **Memory Limits**: Sets memory limits when parsing multipart/form-data to prevent memory overflow
+3. **Concurrent Processing**: Go's HTTP server supports concurrent request processing by default, no additional configuration needed
 
-目前项目提供了基本的日志输出，可以在启动时看到服务器监听地址、根目录等信息。对于生产环境，可以考虑添加更完善的日志系统和监控机制。
+## Monitoring and Maintenance
+
+Currently, the project provides basic log output where you can see server listening address, root directory, and other information at startup. For production environments, consider adding a more complete logging system and monitoring mechanism.

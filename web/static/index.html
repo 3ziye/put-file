@@ -1,81 +1,1751 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Upload Server</title>
+    <title>put-file - 文件上传服务器</title>
     <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --success-color: #4cc9f0;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --text-light: #6c757d;
+            --border-color: #e9ecef;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 25px rgba(67, 97, 238, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
             padding: 20px;
         }
+        
         .container {
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
         }
-        form {
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 0;
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            background-color: var(--card-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .upload-section {
+            margin-bottom: 30px;
+        }
+        
+        .upload-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .upload-header h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .upload-header p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+        
+        .drop-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .drop-area:hover,
+        .drop-area.active {
+            border-color: var(--primary-color);
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+        
+        .drop-area-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+        
+        .drop-area-text {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .drop-area-subtext {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        #file-input {
+            display: none;
+        }
+        
+        .browse-btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .browse-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .file-info {
+            display: none;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: rgba(76, 201, 240, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .file-name {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+        
+        .supported-files {
             margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.02);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
         }
-        input[type="file"] {
+        
+        .supported-files h4 {
+            margin-bottom: 8px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        .file-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .file-type-tag {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .features {
+            margin-top: 40px;
+        }
+        
+        .features h3 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature-item {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--card-color);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .feature-title {
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .feature-description {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        .organization-info {
+            margin-top: 40px;
+            padding: 25px;
+            background-color: var(--card-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        
+        .organization-info h3 {
+            color: var(--primary-color);
             margin-bottom: 15px;
         }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+        
+        .organization-info p {
+            margin-bottom: 15px;
+            color: var(--text-light);
         }
-        button:hover {
-            background-color: #45a049;
+        
+        .github-link {
+            display: inline-block;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
         }
+        
+        .github-link:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: auto;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
         .message {
             margin-top: 20px;
-            padding: 10px;
-            border-radius: 4px;
+            padding: 12px;
+            border-radius: 6px;
+            display: none;
         }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
+        
+        .message.success {
+            background-color: rgba(76, 201, 240, 0.15);
+            color: #006400;
+            border-left: 4px solid var(--success-color);
+            display: block;
         }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
+        
+        .message.error {
+            background-color: rgba(248, 113, 113, 0.15);
+            color: #dc2626;
+            border-left: 4px solid #f87171;
+            display: block;
         }
-        .api-info {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
+        
+        /* 认证区域样式 */
+        #auth-section {
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            text-align: center;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        /* 未认证时隐藏操作区域 */
+        .require-auth {
+            display: none;
+        }
+        
+        /* 已认证时显示操作区域 */
+        .authenticated .require-auth {
+            display: block;
+        }
+        
+        /* 已认证时隐藏认证区域 */
+        .authenticated #auth-section {
+            display: none;
+        }
+        
+        #auth-section .auth-header {
+            margin-bottom: 20px;
+        }
+        
+        #auth-section .auth-header h2 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        #auth-section .auth-header p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+        
+        #auth-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        #auth-section .auth-input {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            width: 200px;
+        }
+        
+        /* Global auth button style (used by header and auth area) */
+        .auth-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 6px 14px rgba(67, 97, 238, 0.12);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(67, 97, 238, 0.16);
+            background-color: var(--secondary-color);
+        }
+
+        /* Header logout specific placement */
+        #header-logout-btn {
+            position: absolute;
+            right: 120px;
+            top: 22px;
+            display: none; /* toggled by JS */
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        /* Language selector styles */
+        .language-selector {
+            position: absolute;
+            right: 20px;
+            top: 22px;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .language-btn {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .language-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .language-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Keep auth area logout slightly different if needed */
+        #logout-btn {
+            display: none; /* toggled by JS */
+        }
+        
+        #auth-section .auth-status {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        #auth-section .auth-status.authenticated {
+            color: var(--success-color);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            #auth-form {
+                flex-direction: column;
+            }
+            
+            #auth-section .auth-input {
+                width: 100%;
+                max-width: 250px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>File Upload Server</h1>
-        <form action="/upload" method="post" enctype="multipart/form-data">
-            <div>
-                <label for="file">Select file:</label>
-                <input type="file" id="file" name="file" required>
+    <div class="container" id="main-container">
+        <header>
+            <div class="logo">put-file</div>
+            <p class="subtitle">简单高效的文件上传与分享服务器</p>
+            <button id="header-logout-btn" class="auth-btn" style="margin-left: 10px; display: none;">退出</button>
+            <div class="language-selector">
+                <button id="lang-zh" class="language-btn active">中文</button>
+                <button id="lang-en" class="language-btn">English</button>
             </div>
-            <button type="submit">Upload</button>
-        </form>
-        <div class="api-info">
-            <h3>API Information</h3>
-            <p>API endpoints require authentication. Default username: admin, password: admin123</p>
-            <p>For details, please check the project's README.md or refer to the api.md file in the doc directory.</p>
+        </header>
+        
+        <!-- 简化的功能特点 -->
+        <div class="simple-features" style="margin-bottom: 20px; font-size: 0.9rem; color: var(--text-light);">
+            <div style="display: flex; justify-content: center; gap: 30px;">
+                <span>⚡ 快速上传</span>
+                <span>🔒 安全可靠</span>
+                <span>🌐 易于访问</span>
+            </div>
         </div>
         
-        <div class="api-info">
-            <h3>About 3ziye Open Source Organization</h3>
-            <p>GoStaticServe is developed and maintained by 3ziye Open Source Organization.</p>
-            <p>We are rooted in technology and innovative in thinking, deeply cultivating the field of industrial digital intelligence. Our goal is to create a technology ecosystem that empowers the future through open source collaboration.</p>
-            <p>For more information, visit our <a href="https://github.com/3ziye" target="_blank">GitHub Organization Page</a></p>
+        <!-- 认证区域 -->
+        <div id="auth-section">
+            <div class="auth-header">
+                <h2>安全认证</h2>
+                <p>请输入凭据以继续操作</p>
+            </div>
+            <form id="auth-form">
+                <div style="margin-bottom: 15px;width: 120px;">
+                    <label for="auth-username" style="display: block; margin-bottom: 5px; color: var(--text-light);">用户名</label>
+                    <input style="width: 120px;" type="text" id="auth-username" class="auth-input" value="admin" placeholder="请输入用户名" required>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label for="auth-password" style="display: block; margin-bottom: 5px; color: var(--text-light);">密码</label>
+                    <input type="password" id="auth-password" class="auth-input" placeholder="请输入密码" required>
+                </div>
+                <div>
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="remember-me" style="margin-right: 8px; cursor: pointer;">
+                        <span style="color: var(--text-light);">记住(24h)</span>
+                    </label>
+                </div>
+                <br></br>
+                <button type="submit" class="auth-btn">登录</button>
+            </form>
+            <div id="auth-status" class="auth-status" style="margin-top: 15px; font-size: 0.9rem; display: flex; align-items: center; justify-content: center;">
+                <span id="status-text">未认证</span>
+                <span id="current-user" style="margin-left: 10px; color: var(--accent); display: none;"></span>
+                <span id="auth-expires" style="margin-left: 10px; font-size: 0.8rem; color: var(--text-light); display: none;"></span>
+            </div>
+            <button id="logout-btn" class="auth-btn" style="margin-top: 10px; background-color: #6c757d; display: none;">退出登录</button>
+        </div>
+
+        <div class="card require-auth">
+            <div class="upload-section">
+                <div class="upload-header">
+                    <h2>上传文件</h2>
+                    <p>拖拽文件到下方区域或点击选择文件</p>
+                </div>
+                
+                <form action="/upload" method="post" enctype="multipart/form-data" id="upload-form">
+                    <div class="drop-area" id="drop-area">
+                        <div class="drop-area-icon">📁</div>
+                        <div class="drop-area-text">将文件拖放到此处</div>
+                        <div class="drop-area-subtext">或者</div>
+                        <label for="file-input" class="browse-btn">浏览文件</label>
+                        <input type="file" id="file-input" name="file" required>
+                    </div>
+                    
+                    <div class="file-info" id="file-info">
+                        已选择文件: <span class="file-name" id="file-name"></span>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">上传文件</button>
+                </form>
+                
+                <div class="supported-files">
+                    <h4>支持的文件类型:</h4>
+                    <div class="file-types">
+                        <span class="file-type-tag">PDF</span>
+                        <span class="file-type-tag">DOC/DOCX</span>
+                        <span class="file-type-tag">JPG/JPEG</span>
+                        <span class="file-type-tag">PNG</span>
+                        <span class="file-type-tag">GIF</span>
+                        <span class="file-type-tag">TXT</span>
+                        <span class="file-type-tag">MD</span>
+                        <span class="file-type-tag">HTML/CSS/JS</span>
+                        <span class="file-type-tag">JSON/XML</span>
+                        <span class="file-type-tag">ZIP/RAR/TAR/GZ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card require-auth">
+            <div class="upload-header">
+                <h2>文件列表</h2>
+                <p>已上传的文件将显示在此处</p>
+            </div>
+            
+            <div id="file-list-container">
+                <div id="loading-indicator" style="text-align: center; padding: 20px; color: var(--text-light); display: none;">
+                    正在加载文件列表...
+                </div>
+                
+                <div id="no-files" style="text-align: center; padding: 20px; color: var(--text-light); display: none;">
+                    暂无上传文件
+                </div>
+                
+                <table id="file-table" style="width: 100%; border-collapse: collapse; margin-top: 20px; display: none;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--border-color); background-color: rgba(67, 97, 238, 0.05);">文件名</th>
+                            <th style="padding: 10px; text-align: right; border-bottom: 2px solid var(--border-color); background-color: rgba(67, 97, 238, 0.05);">大小</th>
+                            <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--border-color); background-color: rgba(67, 97, 238, 0.05);">上传时间</th>
+                            <th style="padding: 10px; text-align: center; border-bottom: 2px solid var(--border-color); background-color: rgba(67, 97, 238, 0.05);">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="file-list-body">
+                        <!-- 文件列表将通过JavaScript动态生成 -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+    
+    <footer>
+        <p>© 2025 <a href="https://github.com/3ziye/put-file" target="_blank" style="color: var(--primary-color); text-decoration: none;">put-file</a> - 由3ziye开源组织提供支持</p>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Language support
+            const languages = {
+                zh: {
+                    subtitle: '简单高效的文件上传与分享服务器',
+                    quickFeatures: ['⚡ 快速上传', '🔒 安全可靠', '🌐 易于访问'],
+                    authHeaderTitle: '安全认证',
+                    authHeaderDesc: '请输入凭据以继续操作',
+                    usernameLabel: '用户名',
+                    usernamePlaceholder: '请输入用户名',
+                    passwordLabel: '密码',
+                    passwordPlaceholder: '请输入密码',
+                    rememberMe: '记住(24h)',
+                    loginBtn: '登录',
+                    logoutBtn: '退出',
+                    statusUnauthenticated: '未认证',
+                    statusAuthenticated: '已认证',
+                    uploadSectionTitle: '上传文件',
+                    uploadSectionDesc: '拖拽文件到下方区域或点击选择文件',
+                    dropAreaText: '将文件拖放到此处',
+                    dropAreaSubtext: '或者',
+                    browseBtn: '浏览文件',
+                    fileInfoText: '已选择文件: ',
+                    submitBtn: '上传文件',
+                    supportedFilesTitle: '支持的文件类型:',
+                    fileListSectionTitle: '文件列表',
+                    fileListSectionDesc: '已上传的文件将显示在此处',
+                    loadingFiles: '正在加载文件列表...',
+                    noFiles: '暂无上传文件',
+                    tableHeaders: ['文件名', '大小', '上传时间', '操作'],
+                    openBtn: '打开',
+                    deleteBtn: '删除',
+                    deleteConfirm: '确定要删除文件"{fileName}"吗？',
+                    footerText: '© 2025 put-file - 由3ziye开源组织提供支持',
+                    // 新的翻译项
+                    username: '用户名',
+                    password: '密码',
+                    uploading: '上传中...',
+                    networkErrorPleaseRetry: '网络错误，请稍后重试',
+                    uploadSuccessButParseFailed: '文件上传成功，但解析响应失败',
+                    confirmDeleteFile: '确定要删除文件"{fileName}"吗？',
+                    fetchFileListFailed: '获取文件列表失败',
+                    loadFileListFailed: '加载文件列表失败',
+                    fileDeleteFailed: '删除文件失败',
+                    pleaseAuthenticateToViewFiles: '请先进行认证以查看文件列表',
+                    notSupportedFileType: '不支持的文件类型',
+                    pleaseSelectFile: '请选择要上传的文件',
+                    pleaseAuthenticateFirst: '请先进行认证',
+                    authFailedPleaseLogin: '认证失败，请重新登录',
+                    uploadSuccess: '文件上传成功',
+                    uploadFailed: '上传失败',
+                    invalidAuthPleaseLogin: '认证信息无效，请重新登录',
+                    fileDeleteSuccess: '文件删除成功',
+                    messages: {
+                        loggedOut: '已退出登录',
+                        authSuccess: '认证成功',
+                        authFailed: '登录失败：用户名或密码错误',
+                        networkError: '登录失败：网络错误，请稍后重试',
+                        enterPassword: '请输入密码',
+                        unsupportedFileType: '不支持的文件类型',
+                        selectFile: '请选择要上传的文件',
+                        pleaseAuthenticate: '请先进行认证',
+                        fileUploadSuccess: '文件上传成功',
+                        authExpired: '认证失败，请重新登录',
+                        uploadFailed: '上传失败',
+                        fileDeleteSuccess: '文件删除成功',
+                        deleteFailed: '删除文件失败: ',
+                        invalidAuth: '认证信息无效，请重新登录',
+                        loadingFailed: '加载文件列表失败: '
+                    }
+                },
+                en: {
+                    subtitle: 'Simple and efficient file upload and sharing server',
+                    quickFeatures: ['⚡ Fast Upload', '🔒 Secure', '🌐 Easy Access'],
+                    authHeaderTitle: 'Secure Authentication',
+                    authHeaderDesc: 'Please enter your credentials to continue',
+                    usernameLabel: 'Username',
+                    usernamePlaceholder: 'Enter username',
+                    passwordLabel: 'Password',
+                    passwordPlaceholder: 'Enter password',
+                    rememberMe: 'Remember (24h)',
+                    loginBtn: 'Login',
+                    logoutBtn: 'Logout',
+                    statusUnauthenticated: 'Unauthenticated',
+                    statusAuthenticated: 'Authenticated',
+                    uploadSectionTitle: 'Upload File',
+                    uploadSectionDesc: 'Drag and drop files to the area below or click to select files',
+                    dropAreaText: 'Drop files here',
+                    dropAreaSubtext: 'or',
+                    browseBtn: 'Browse Files',
+                    fileInfoText: 'Selected file: ',
+                    submitBtn: 'Upload File',
+                    supportedFilesTitle: 'Supported file types:',
+                    fileListSectionTitle: 'File List',
+                    fileListSectionDesc: 'Uploaded files will be displayed here',
+                    loadingFiles: 'Loading file list...',
+                    noFiles: 'No uploaded files yet',
+                    tableHeaders: ['File Name', 'Size', 'Upload Time', 'Actions'],
+                    openBtn: 'Open',
+                    deleteBtn: 'Delete',
+                    deleteConfirm: 'Are you sure you want to delete file "{fileName}"?',
+                    footerText: '© 2025 put-file - Supported by 3ziye Open Source Organization',
+                    // 新的翻译项
+                    username: 'Username',
+                    password: 'Password',
+                    uploading: 'Uploading...',
+                    networkErrorPleaseRetry: 'Network error, please try again later',
+                    uploadSuccessButParseFailed: 'File uploaded successfully, but failed to parse response',
+                    confirmDeleteFile: 'Are you sure you want to delete file "{fileName}"?',
+                    fetchFileListFailed: 'Failed to fetch file list',
+                    loadFileListFailed: 'Failed to load file list',
+                    fileDeleteFailed: 'Failed to delete file',
+                    pleaseAuthenticateToViewFiles: 'Please authenticate first to view file list',
+                    notSupportedFileType: 'Unsupported file type',
+                    pleaseSelectFile: 'Please select a file to upload',
+                    pleaseAuthenticateFirst: 'Please authenticate first',
+                    authFailedPleaseLogin: 'Authentication failed, please login again',
+                    uploadSuccess: 'File uploaded successfully',
+                    uploadFailed: 'Upload failed',
+                    invalidAuthPleaseLogin: 'Invalid authentication, please login again',
+                    fileDeleteSuccess: 'File deleted successfully',
+                    messages: {
+                        loggedOut: 'Logged out successfully',
+                        authSuccess: 'Authentication successful',
+                        authFailed: 'Login failed: Incorrect username or password',
+                        networkError: 'Login failed: Network error, please try again later',
+                        enterPassword: 'Please enter password',
+                        unsupportedFileType: 'Unsupported file type',
+                        selectFile: 'Please select a file to upload',
+                        pleaseAuthenticate: 'Please authenticate first',
+                        fileUploadSuccess: 'File uploaded successfully',
+                        authExpired: 'Authentication failed, please login again',
+                        uploadFailed: 'Upload failed',
+                        fileDeleteSuccess: 'File deleted successfully',
+                        deleteFailed: 'Failed to delete file: ',
+                        invalidAuth: 'Invalid authentication information, please login again',
+                        loadingFailed: 'Failed to load file list: '
+                    }
+                }
+            };
+            
+            // Current language
+            let currentLang = localStorage.getItem('put-file-language') || 'zh';
+            
+            // Current language pack
+            let langPack = languages[currentLang];
+            
+            // Function to switch language
+            function switchLanguage(lang) {
+                if (!languages[lang]) return;
+                
+                currentLang = lang;
+                localStorage.setItem('put-file-language', lang);
+                
+                // Update language buttons
+                document.getElementById('lang-zh').classList.toggle('active', lang === 'zh');
+                document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+                
+                // Update HTML lang attribute
+                document.documentElement.lang = lang;
+                
+                // Update text content and langPack
+                const translations = languages[lang];
+                langPack = translations;
+                
+                // Update subtitle
+                document.querySelector('.subtitle').textContent = translations.subtitle;
+                
+                // Update quick features
+                const quickFeatures = document.querySelector('.simple-features');
+                if (quickFeatures) {
+                    const featuresDiv = quickFeatures.querySelector('div');
+                    if (featuresDiv) {
+                        featuresDiv.innerHTML = '';
+                        translations.quickFeatures.forEach((feature, index) => {
+                            const span = document.createElement('span');
+                            span.textContent = feature;
+                            if (index < translations.quickFeatures.length - 1) {
+                                span.style.marginRight = '30px';
+                            }
+                            featuresDiv.appendChild(span);
+                        });
+                    }
+                }
+                
+                // Update auth section
+                const authHeader = document.querySelector('#auth-section .auth-header h2');
+                if (authHeader) authHeader.textContent = translations.authHeaderTitle;
+                
+                const authHeaderDesc = document.querySelector('#auth-section .auth-header p');
+                if (authHeaderDesc) authHeaderDesc.textContent = translations.authHeaderDesc;
+                
+                const usernameLabel = document.querySelector('label[for="auth-username"]');
+                if (usernameLabel) usernameLabel.textContent = translations.usernameLabel;
+                
+                const authUsername = document.getElementById('auth-username');
+                if (authUsername) authUsername.placeholder = translations.usernamePlaceholder;
+                
+                const passwordLabel = document.querySelector('label[for="auth-password"]');
+                if (passwordLabel) passwordLabel.textContent = translations.passwordLabel;
+                
+                const authPassword = document.getElementById('auth-password');
+                if (authPassword) authPassword.placeholder = translations.passwordPlaceholder;
+                
+                const rememberMeLabel = document.querySelector('label[for="remember-me"] span');
+                if (rememberMeLabel) rememberMeLabel.textContent = translations.rememberMe;
+                
+                const loginBtn = document.querySelector('#auth-form button[type="submit"]');
+                if (loginBtn) loginBtn.textContent = translations.loginBtn;
+                
+                // Update logout buttons
+                const logoutBtns = document.querySelectorAll('.auth-btn:not(#logout-btn)');
+                logoutBtns.forEach(btn => {
+                    if (btn.textContent === '退出') btn.textContent = translations.logoutBtn;
+                });
+                
+                const mainLogoutBtn = document.getElementById('logout-btn');
+                if (mainLogoutBtn) mainLogoutBtn.textContent = translations.logoutBtn;
+                
+                // Update upload section
+                const uploadHeader = document.querySelector('.upload-section .upload-header h2');
+                if (uploadHeader) uploadHeader.textContent = translations.uploadSectionTitle;
+                
+                const uploadHeaderDesc = document.querySelector('.upload-section .upload-header p');
+                if (uploadHeaderDesc) uploadHeaderDesc.textContent = translations.uploadSectionDesc;
+                
+                const dropAreaText = document.querySelector('.drop-area-text');
+                if (dropAreaText) dropAreaText.textContent = translations.dropAreaText;
+                
+                const dropAreaSubtext = document.querySelector('.drop-area-subtext');
+                if (dropAreaSubtext) dropAreaSubtext.textContent = translations.dropAreaSubtext;
+                
+                const browseBtn = document.querySelector('.browse-btn');
+                if (browseBtn) browseBtn.textContent = translations.browseBtn;
+                
+                const fileInfo = document.querySelector('.file-info');
+                if (fileInfo && !fileInfo.classList.contains('dynamic-file-info')) {
+                    fileInfo.classList.add('dynamic-file-info');
+                    // Store original structure for later updates
+                    const originalHTML = fileInfo.innerHTML;
+                    fileInfo.dataset.originalHTML = originalHTML;
+                }
+                
+                if (fileInfo && fileInfo.classList.contains('dynamic-file-info') && fileInfo.textContent.includes('已选择文件') || fileInfo.textContent.includes('Selected file')) {
+                    const fileName = document.getElementById('file-name');
+                    if (fileName && fileName.textContent) {
+                        fileInfo.innerHTML = translations.fileInfoText + '<span class="file-name" id="file-name">' + fileName.textContent + '</span>';
+                    }
+                }
+                
+                const submitBtn = document.querySelector('.submit-btn');
+                if (submitBtn) submitBtn.textContent = translations.submitBtn;
+                
+                const supportedFilesTitle = document.querySelector('.supported-files h4');
+                if (supportedFilesTitle) supportedFilesTitle.textContent = translations.supportedFilesTitle;
+                
+                // Update file list section
+                const fileListHeader = document.querySelector('.card.require-auth:nth-of-type(2) .upload-header h2');
+                if (fileListHeader) fileListHeader.textContent = translations.fileListSectionTitle;
+                
+                const fileListHeaderDesc = document.querySelector('.card.require-auth:nth-of-type(2) .upload-header p');
+                if (fileListHeaderDesc) fileListHeaderDesc.textContent = translations.fileListSectionDesc;
+                
+                const loadingIndicator = document.getElementById('loading-indicator');
+                if (loadingIndicator) loadingIndicator.textContent = translations.loadingFiles;
+                
+                const noFiles = document.getElementById('no-files');
+                if (noFiles) noFiles.textContent = translations.noFiles;
+                
+                // Update table headers
+                const tableHeaders = document.querySelectorAll('#file-table th');
+                if (tableHeaders.length === translations.tableHeaders.length) {
+                    tableHeaders.forEach((th, index) => {
+                        th.textContent = translations.tableHeaders[index];
+                    });
+                }
+                
+                // Update open/delete buttons (this will affect future buttons added dynamically)
+                document.querySelectorAll('.open-btn').forEach(btn => {
+                    btn.textContent = translations.openBtn;
+                });
+                
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.textContent = translations.deleteBtn;
+                });
+                
+                // Update footer
+                const footer = document.querySelector('footer p');
+                if (footer) {
+                    footer.innerHTML = translations.footerText.replace('put-file', '<a href="https://github.com/3ziye/put-file" target="_blank" style="color: var(--primary-color); text-decoration: none;">put-file</a>');
+                }
+                
+                // Update status text if it's not temporary
+                const statusText = document.getElementById('status-text');
+                if (statusText && !statusText.dataset.temp) {
+                    const authCache = JSON.parse(localStorage.getItem('put-fileAuth') || '{}');
+                    statusText.textContent = authCache.isAuthenticated ? translations.statusAuthenticated : translations.statusUnauthenticated;
+                }
+                
+                // Update any authentication expired time format
+                const authExpires = document.getElementById('auth-expires');
+                if (authExpires && authExpires.style.display !== 'none') {
+                    const authCache = JSON.parse(localStorage.getItem('put-fileAuth') || '{}');
+                    if (authCache.lastAuthenticated) {
+                        const expireTime = new Date(authCache.lastAuthenticated + 24 * 60 * 60 * 1000);
+                        const timeFormat = lang === 'zh' ? 'zh-CN' : 'en-US';
+                        authExpires.textContent = (lang === 'zh' ? '过期时间: ' : 'Expires: ') + 
+                            expireTime.toLocaleTimeString(timeFormat, {hour: '2-digit', minute:'2-digit'});
+                    }
+                }
+            }
+            
+            // Initialize language
+            switchLanguage(currentLang);
+            
+            // Add language switch event listeners
+            document.getElementById('lang-zh').addEventListener('click', () => switchLanguage('zh'));
+            document.getElementById('lang-en').addEventListener('click', () => switchLanguage('en'));
+            
+            // Override showMessage function to use translations
+            const originalShowMessage = window.showMessage;
+            window.showMessage = function(message, type = 'info') {
+                // Try to translate message if it's a known message key
+                const translations = languages[currentLang];
+                if (translations && translations.messages && translations.messages[message]) {
+                    message = translations.messages[message];
+                }
+                
+                // Call original function
+                originalShowMessage(message, type);
+            };
+            
+            const dropArea = document.getElementById('drop-area');
+            const fileInput = document.getElementById('file-input');
+            const fileInfo = document.getElementById('file-info');
+            const fileName = document.getElementById('file-name');
+            const uploadForm = document.getElementById('upload-form');
+            const authForm = document.getElementById('auth-form');
+            const authSection = document.getElementById('auth-section');
+            const authStatus = document.getElementById('auth-status');
+            
+            // 认证状态管理
+            let authCache = {
+                authHeader: null,
+                isAuthenticated: false,
+                lastAuthenticated: null,
+                username: ''
+            };
+
+            const logoutBtn = document.getElementById('logout-btn');
+            const headerLogoutBtn = document.getElementById('header-logout-btn');
+            const authPassword = document.getElementById('auth-password');
+            const strengthText = document.getElementById('strength-text');
+            const rememberMe = document.getElementById('remember-me');
+            const currentUser = document.getElementById('current-user');
+            const authExpires = document.getElementById('auth-expires');
+            const statusText = document.getElementById('status-text');
+
+            // 检查本地存储中的认证信息
+            const savedAuth = localStorage.getItem('put-fileAuth');
+            if (savedAuth) {
+                try {
+                    const parsed = JSON.parse(savedAuth);
+                    const now = new Date().getTime();
+                    if (parsed.isAuthenticated && (now - parsed.lastAuthenticated < 24 * 60 * 60 * 1000)) {
+                        authCache = parsed;
+                        updateAuthStatus();
+                    }
+                } catch (e) {
+                    // 忽略解析错误
+                }
+            }
+
+            // 检查密码强度
+            function checkPasswordStrength(password) {
+                let strength = 0;
+                
+                // 长度检查
+                if (password.length >= 8) strength++;
+                if (password.length >= 12) strength++;
+                
+                // 复杂度检查
+                if (/[A-Z]/.test(password)) strength++;
+                if (/[a-z]/.test(password)) strength++;
+                if (/[0-9]/.test(password)) strength++;
+                if (/[^A-Za-z0-9]/.test(password)) strength++;
+                
+                return strength;
+            }
+
+            // 更新认证状态显示
+            function updateAuthStatus() {
+                const mainContainer = document.getElementById('main-container');
+                
+                if (authCache.isAuthenticated) {
+                    // 如果当前statusText被临时错误信息占用（由showMessage设置），则不要覆盖它。
+                    if (!statusText.dataset.temp) {
+                        statusText.textContent = langPack.statusAuthenticated;
+                    }
+                    authStatus.classList.add('authenticated');
+                    mainContainer.classList.add('authenticated');
+                    logoutBtn.style.display = 'inline-block';
+                    if (headerLogoutBtn) headerLogoutBtn.style.display = 'inline-block';
+                    
+                    // 显示当前用户和过期时间
+                    if (authCache.username) {
+                        currentUser.textContent = authCache.username;
+                        currentUser.style.display = 'inline';
+                    }
+                    
+                    // 显示认证过期时间
+                    if (authCache.lastAuthenticated) {
+                        const expireTime = new Date(authCache.lastAuthenticated + 24 * 60 * 60 * 1000);
+                        const timeFormat = currentLang === 'en' ? 'en-US' : 'zh-CN';
+                        authExpires.textContent = (currentLang === 'zh' ? '过期时间: ' : 'Expires: ') + 
+                            expireTime.toLocaleTimeString(timeFormat, {hour: '2-digit', minute:'2-digit'});
+                        authExpires.style.display = 'inline';
+                    }
+                } else {
+                    // 同上，只有在没有临时错误信息时才恢复为默认的未认证状态
+                    if (!statusText.dataset.temp) {
+                        statusText.textContent = langPack.statusUnauthenticated;
+                    }
+                    authStatus.classList.remove('authenticated');
+                    mainContainer.classList.remove('authenticated');
+                    logoutBtn.style.display = 'none';
+                    if (headerLogoutBtn) headerLogoutBtn.style.display = 'none';
+                    currentUser.style.display = 'none';
+                    authExpires.style.display = 'none';
+                }
+            }
+
+            // 执行退出逻辑的通用函数
+            function performLogout() {
+                authCache = {
+                    authHeader: null,
+                    isAuthenticated: false,
+                    lastAuthenticated: null,
+                    username: ''
+                };
+
+                localStorage.removeItem('put-fileAuth');
+                sessionStorage.removeItem('put-fileAuth');
+                updateAuthStatus();
+                showMessage(langPack.messages.loggedOut, 'info');
+            }
+
+            // 绑定底部退出按钮
+            logoutBtn.addEventListener('click', function() {
+                performLogout();
+            });
+
+            // 绑定头部退出按钮
+            if (headerLogoutBtn) {
+                headerLogoutBtn.addEventListener('click', function() {
+                    performLogout();
+                });
+            }
+
+            // 更新登录状态显示
+            function updateLoginStatusDisplay(isAuthenticated) {
+                updateAuthStatus();
+            }
+
+            // 处理认证表单提交
+            authForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('auth-username').value;
+                const password = document.getElementById('auth-password').value;
+                
+                if (password) {
+                    // 创建Basic认证头
+                    const authHeader = 'Basic ' + btoa(username + ':' + password);
+                    
+                    // 先向服务器验证凭据有效性
+                    fetch('/api/auth/verify', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': authHeader
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            // 验证成功，更新认证缓存
+                            authCache = {
+                                authHeader: authHeader,
+                                isAuthenticated: true,
+                                lastAuthenticated: new Date().getTime(),
+                                username: username
+                            };
+                            
+                            // 保存到本地存储
+                            if (rememberMe.checked) {
+                                localStorage.setItem('put-fileAuth', JSON.stringify(authCache));
+                            } else {
+                                // 如果不勾选记住我，则使用会话存储
+                                sessionStorage.setItem('put-fileAuth', JSON.stringify(authCache));
+                                // 清除可能存在的本地存储
+                                localStorage.removeItem('put-fileAuth');
+                            }
+                            
+                            // 更新认证状态
+                            updateAuthStatus();
+
+                            // 登录成功后刷新文件列表
+                            loadFileList();
+
+                            // 清空密码字段
+                            document.getElementById('auth-password').value = '';
+
+                            // 显示成功消息
+                            showMessage(langPack.messages.authSuccess, 'success');
+                            
+                            // 无论文件列表是否正在加载，登录后都立即加载文件列表
+                            loadFileList();
+                            
+                            // 登录成功返回值
+                            const loginResult = {
+                                success: true,
+                                timestamp: new Date().toISOString(),
+                                message: langPack.messages.authSuccess,
+                                data: {
+                                    authenticated: true,
+                                    timestamp: authCache.lastAuthenticated,
+                                    username: username
+                                }
+                            };
+                            
+                            // 在控制台输出返回值，便于调试和查看
+                            console.log('登录结果:', loginResult);
+                            
+                            // 可以在全局对象中设置返回值，便于其他脚本获取
+                            window.loginResult = loginResult;
+                            
+                            // 添加持久的登录状态显示
+                            updateLoginStatusDisplay(true);
+                            
+                        } else {
+                            // 验证失败
+                            statusText.textContent = langPack.messages.authFailed;
+                            // 验证失败，显示错误消息
+                            showMessage(langPack.messages.authFailed, 'error');
+                            
+                            // 登录失败返回值
+                            const loginResult = {
+                                success: false,
+                                timestamp: new Date().toISOString(),
+                                message: langPack.messages.authFailed,
+                                data: null
+                            };
+                            
+                            console.log('登录结果:', loginResult);
+                            window.loginResult = loginResult;
+                            
+                            // 更新登录状态显示
+                            updateLoginStatusDisplay(false);
+                        }
+                    }).catch(error => {
+                        // 处理网络或其他错误
+                        statusText.textContent = langPack.messages.networkError;
+                        // 网络错误，显示错误消息
+                        showMessage(langPack.messages.networkError, 'error');
+                        console.error('Login error:', error);
+                        
+                        // 登录失败返回值
+                        const loginResult = {
+                            success: false,
+                            timestamp: new Date().toISOString(),
+                            message: langPack.messages.networkError,
+                            data: null
+                        };
+                        
+                        console.log('登录结果:', loginResult);
+                        window.loginResult = loginResult;
+                        
+                        // 更新登录状态显示
+                        updateLoginStatusDisplay(false);
+                    });
+                } else {
+                    // 密码为空，显示错误消息
+                    statusText.textContent = langPack.messages.enterPassword;
+                    showMessage(langPack.messages.enterPassword, 'error');
+                }
+            });
+            
+            // 拖拽事件处理
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                dropArea.classList.add('active');
+            }
+            
+            function unhighlight() {
+                dropArea.classList.remove('active');
+            }
+            
+            // 处理文件放置
+            dropArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length) {
+                    handleFiles(files[0]);
+                }
+            }
+            
+            // 处理文件选择
+            fileInput.addEventListener('change', function() {
+                if (this.files.length) {
+                    handleFiles(this.files[0]);
+                }
+            });
+            
+            function handleFiles(file) {
+                // 确保文件输入值正确设置
+                fileInput.files = fileInput.files || new FileList();
+                
+                // 显示文件信息
+                fileName.textContent = file.name;
+                fileInfo.style.display = 'block';
+                
+                // 添加一个小动画效果来强调文件被选中
+                fileInfo.style.opacity = '0.7';
+                setTimeout(() => {
+                    fileInfo.style.opacity = '1';
+                }, 200);
+                
+                // 检查文件类型（前端验证，后端也会验证）
+                const allowedExtensions = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif', 'txt', 'md', 'html', 'css', 'js', 'json', 'xml', 'zip', 'rar', 'tar', 'gz'];
+                const extension = file.name.split('.').pop()?.toLowerCase() || '';
+                
+                if (!extension || !allowedExtensions.includes(extension)) {
+                    showMessage(langPack.notSupportedFileType, 'error');
+                    fileInput.value = '';
+                    fileInfo.style.display = 'none';
+                }
+            }
+            
+            // 表单提交处理
+            uploadForm.addEventListener('submit', function(e) {
+                if (!fileInput.files.length) {
+                    e.preventDefault();
+                    showMessage(langPack.pleaseSelectFile, 'error');
+                    return;
+                }
+                
+                if (!authCache.isAuthenticated) {
+                    e.preventDefault();
+                    showMessage(langPack.pleaseAuthenticateFirst, 'error');
+                    // 滚动到认证区域
+                    authSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
+                
+                // 添加认证头到表单提交
+                const formData = new FormData(this);
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/upload');
+                xhr.setRequestHeader('Authorization', authCache.authHeader);
+                
+                // 显示加载状态
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.textContent = langPack.uploading;
+                
+                xhr.onload = function() {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                    
+                    if (xhr.status === 200) {
+                        // 上传成功
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            showMessage(response.message || langPack.uploadSuccess, 'success');
+                            
+                            // 重置表单
+                            uploadForm.reset();
+                            fileInfo.style.display = 'none';
+                            
+                            // 重新加载文件列表
+                            loadFileList();
+                        } catch (e) {
+                            showMessage(langPack.uploadSuccessButParseFailed, 'success');
+                            loadFileList();
+                        }
+                    } else if (xhr.status === 401) {
+                        // 认证失败
+                        showMessage(langPack.authFailedPleaseLogin, 'error');
+                        authCache.isAuthenticated = false;
+                        localStorage.removeItem('put-fileAuth');
+                        updateAuthStatus();
+                        // 滚动到认证区域
+                        authSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        // 其他错误
+                        let errorMsg = langPack.uploadFailed;
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            errorMsg = response.message || errorMsg;
+                        } catch (e) {
+                            errorMsg += ': ' + xhr.statusText;
+                        }
+                        showMessage(errorMsg, 'error');
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                    showMessage(langPack.networkErrorPleaseRetry, 'error');
+                };
+                
+                xhr.send(formData);
+                e.preventDefault(); // 防止默认提交
+            });
+            
+            // 加载文件列表
+            function loadFileList() {
+                const fileTable = document.getElementById('file-table');
+                const fileListBody = document.getElementById('file-list-body');
+                const noFiles = document.getElementById('no-files');
+                const loadingIndicator = document.getElementById('loading-indicator');
+                const notAuthenticated = document.getElementById('not-authenticated');
+                
+                // 显示加载指示器
+                loadingIndicator.style.display = 'block';
+                fileTable.style.display = 'none';
+                noFiles.style.display = 'none';
+                if (notAuthenticated) {
+                    notAuthenticated.style.display = 'none';
+                }
+                
+                // 清空文件列表
+                fileListBody.innerHTML = '';
+                
+                // 检查认证状态
+                if (!authCache.isAuthenticated) {
+                    loadingIndicator.style.display = 'none';
+                    // 创建或显示未认证提示
+                    let notAuthElement = document.getElementById('not-authenticated');
+                    if (!notAuthElement) {
+                        notAuthElement = document.createElement('div');
+                        notAuthElement.id = 'not-authenticated';
+                        notAuthElement.style.textAlign = 'center';
+                        notAuthElement.style.padding = '30px';
+                        notAuthElement.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-light').trim();
+                        notAuthElement.innerHTML = `
+                            <div style="font-size: 2rem; margin-bottom: 15px;">🔒</div>
+                            <p style="margin-bottom: 10px;">${langPack.pleaseAuthenticateToViewFiles}</p>
+                            <p style="font-size: 0.9rem;">${langPack.username}: admin<br>${langPack.password}: admin123</p>
+                        `;
+                        fileListBody.parentNode.insertBefore(notAuthElement, fileListBody);
+                    } else {
+                        // 确保提示内容是当前语言
+                        notAuthElement.innerHTML = `
+                            <div style="font-size: 2rem; margin-bottom: 15px;">🔒</div>
+                            <p style="margin-bottom: 10px;">${langPack.pleaseAuthenticateToViewFiles}</p>
+                            <p style="font-size: 0.9rem;">${langPack.username}: admin<br>${langPack.password}: admin123</p>
+                        `;
+                        notAuthElement.style.display = 'block';
+                    }
+                    showMessage(langPack.pleaseAuthenticateFirst, 'error');
+                    return;
+                }
+                
+                // 获取认证头
+                const authHeader = getAuthHeader();
+                if (!authHeader) {
+                    loadingIndicator.style.display = 'none';
+                    showMessage(langPack.invalidAuthPleaseLogin, 'error');
+                    return;
+                }
+                
+                // 请求文件列表
+                fetch('/api/files', {
+                    headers: {
+                        'Authorization': authHeader
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP错误!状态: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    loadingIndicator.style.display = 'none';
+                    
+                    // 检查API响应是否成功
+                    if (!data.success) {
+                        throw new Error(data.message || langPack.fetchFileListFailed);
+                    }
+                    
+                    // 从响应中获取文件列表数据
+                    const files = data.data || [];
+                    
+                    // 按创建时间排序（最新的在前）
+                    files.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                    
+                    if (files.length > 0) {
+                        // 显示文件表
+                        fileTable.style.display = 'table';
+                        
+                        // 生成文件列表HTML
+                        files.forEach(file => {
+                            const fileSize = formatFileSize(file.size);
+                            const fileTime = formatDateTime(file.created_at);
+                            
+                            // 创建表格行
+                            const row = document.createElement('tr');
+                            row.className = 'file-row';
+                            // 使用langPack变量获取按钮文本
+                            const openBtnText = langPack.openBtn;
+                            const deleteBtnText = langPack.deleteBtn;
+                            
+                            row.innerHTML = `
+                                <td style="padding: 10px; border-bottom: 1px solid var(--border-color);">
+                                    <div style="display: flex; align-items: center;">
+                                        <span class="file-icon">📄</span>
+                                        <span style="margin-left: 8px;">${escapeHTML(file.name)}</span>
+                                    </div>
+                                </td>
+                                <td style="padding: 10px; text-align: right; border-bottom: 1px solid var(--border-color);">
+                                    ${fileSize}
+                                </td>
+                                <td style="padding: 10px; text-align: left; border-bottom: 1px solid var(--border-color);">
+                                    ${fileTime}
+                                </td>
+                                <td style="padding: 10px; text-align: center; border-bottom: 1px solid var(--border-color);">
+                                    <button class="open-btn" data-file="${escapeHTML(file.name)}" style="margin-right: 5px; padding: 5px 10px; background-color: var(--primary-color); color: white; border: none; border-radius: 3px; cursor: pointer;">${openBtnText}</button>
+                                    <button class="delete-btn" data-file="${escapeHTML(file.name)}" style="padding: 5px 10px; background-color: #f44336; color: white; border: none; border-radius: 3px; cursor: pointer;">${deleteBtnText}</button>
+                                </td>
+                            `;
+                            
+                            // 添加悬停效果
+                            row.addEventListener('mouseenter', function() {
+                                this.style.backgroundColor = 'rgba(67, 97, 238, 0.03)';
+                            });
+                            
+                            row.addEventListener('mouseleave', function() {
+                                this.style.backgroundColor = '';
+                            });
+                            
+                            fileListBody.appendChild(row);
+                        });
+                    } else {
+                        // 显示无文件提示
+                        noFiles.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    loadingIndicator.style.display = 'none';
+                    showMessage(langPack.loadFileListFailed + ': ' + error.message, 'error');
+                });
+            }
+            
+            // 获取认证头
+            function getAuthHeader() {
+                if (!authCache.isAuthenticated) {
+                    return null;
+                }
+                
+                // 检查认证是否过期
+                const now = new Date().getTime();
+                if (now - authCache.lastAuthenticated > 24 * 60 * 60 * 1000) {
+                    authCache.isAuthenticated = false;
+                    localStorage.removeItem('put-fileAuth');
+                    updateAuthStatus();
+                    return null;
+                }
+                
+                return authCache.authHeader;
+            }
+            
+            // 打开文件
+            function openFile(fileName) {
+                const authHeader = getAuthHeader();
+                if (!authHeader) {
+                    showMessage('请先进行认证', 'error');
+                    return;
+                }
+                
+                // 创建临时表单并提交以打开文件
+                const form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '/files/' + encodeURIComponent(fileName);
+                
+                // 添加认证头信息
+                const authInput = document.createElement('input');
+                authInput.type = 'hidden';
+                authInput.name = 'auth';
+                authInput.value = authHeader;
+                form.appendChild(authInput);
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+            
+            // 删除文件
+            function deleteFile(fileName) {
+                if (!confirm(langPack.confirmDeleteFile.replace('{fileName}', fileName))) {
+                    return;
+                }
+                
+                const authHeader = getAuthHeader();
+                if (!authHeader) {
+                    showMessage(langPack.pleaseAuthenticateFirst, 'error');
+                    return;
+                }
+                
+                fetch('/api/files/' + encodeURIComponent(fileName), {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': authHeader,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP错误!状态: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    showMessage(data.message || langPack.fileDeleteSuccess, 'success');
+                    // 重新加载文件列表
+                    loadFileList();
+                })
+                .catch(error => {
+                    showMessage(langPack.fileDeleteFailed + ': ' + error.message, 'error');
+                });
+            }
+            
+            // 格式化文件大小
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            // 格式化日期时间
+            function formatDateTime(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffTime = Math.abs(now - date);
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                
+                // 获取当前语言的locale
+                const locale = currentLang === 'en' ? 'en-US' : 'zh-CN';
+                
+                // 今天的文件显示时间
+                if (diffDays === 0) {
+                    return date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+                }
+                // 昨天的文件显示"昨天/Yesterday HH:MM"
+                else if (diffDays === 1) {
+                    return langPack.yesterday + ' ' + 
+                           date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+                }
+                // 今年的文件显示"MM-DD HH:MM"
+                else if (date.getFullYear() === now.getFullYear()) {
+                    return date.toLocaleDateString(locale, { month: '2-digit', day: '2-digit' }) + ' ' + 
+                           date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+                }
+                // 其他显示完整日期"YYYY-MM-DD HH:MM"
+                else {
+                    return date.toLocaleDateString(locale, { year: 'numeric', month: '2-digit', day: '2-digit' }) + ' ' + 
+                           date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+                }
+            }
+            
+            // HTML转义函数，防止XSS攻击
+            function escapeHTML(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+            
+            // 消息显示函数
+            function showMessage(message, type = 'info') {
+                // 创建消息容器
+                let messageContainer = document.getElementById('message-container');
+                if (!messageContainer) {
+                    messageContainer = document.createElement('div');
+                    messageContainer.id = 'message-container';
+                    messageContainer.style.position = 'fixed';
+                    messageContainer.style.top = '20px';
+                    messageContainer.style.right = '20px';
+                    messageContainer.style.zIndex = '1000';
+                    messageContainer.style.maxWidth = '400px';
+                    document.body.appendChild(messageContainer);
+                }
+                
+                // 创建消息元素
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message notification';
+                
+                // 设置消息样式
+                let bgColor, textColor;
+                switch(type) {
+                    case 'success':
+                        bgColor = '#4caf50';
+                        textColor = 'white';
+                        break;
+                    case 'error':
+                        bgColor = '#f44336';
+                        textColor = 'white';
+                        break;
+                    case 'warning':
+                        bgColor = '#ff9800';
+                        textColor = 'white';
+                        break;
+                    default:
+                        bgColor = '#2196f3';
+                        textColor = 'white';
+                }
+                
+                messageElement.style.backgroundColor = bgColor;
+                messageElement.style.color = textColor;
+                messageElement.style.padding = '12px 16px';
+                messageElement.style.borderRadius = '4px';
+                messageElement.style.marginBottom = '8px';
+                messageElement.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
+                messageElement.style.fontSize = '14px';
+                messageElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                messageElement.style.opacity = '0';
+                messageElement.style.transform = 'translateX(20px)';
+                messageElement.style.wordWrap = 'break-word';
+                
+                // 设置消息内容
+                messageElement.textContent = message;
+                
+                // 添加到容器
+                messageContainer.appendChild(messageElement);
+                // 如果是错误类型，同时把错误信息写入认证状态区域的 #status-text，便于用户在页面上看到明确的错误原因。
+                // 保存之前的状态文本，5秒后恢复（仅当该状态未被其他操作覆盖时恢复）。
+                if (type === 'error') {
+                    try {
+                        const statusEl = document.getElementById('status-text');
+                        if (statusEl) {
+                            const previousStatus = statusEl.textContent;
+                            // 标记为临时状态，避免其他函数（如 updateAuthStatus）覆盖
+                            statusEl.dataset.temp = 'true';
+                            statusEl.textContent = message;
+                            // 在5秒后恢复之前的状态，仅当当前仍为我们的错误信息时恢复
+                            setTimeout(() => {
+                                try {
+                                    if (statusEl && statusEl.textContent === message) {
+                                        statusEl.textContent = previousStatus;
+                                    }
+                                    // 清除临时标记
+                                    delete statusEl.dataset.temp;
+                                } catch (innerErr) {
+                                    // 忽略恢复时的错误
+                                }
+                            }, 5000);
+                        }
+                    } catch (e) {
+                        // 忽略任何与状态写入相关的错误
+                        console.error('更新状态文本失败:', e);
+                    }
+                }
+                
+                // 显示消息（动画）
+                setTimeout(() => {
+                    messageElement.style.opacity = '1';
+                    messageElement.style.transform = 'translateX(0)';
+                }, 10);
+                
+                // 3秒后自动隐藏
+                setTimeout(() => {
+                    messageElement.style.opacity = '0';
+                    messageElement.style.transform = 'translateX(20px)';
+                    
+                    // 动画结束后移除元素
+                    setTimeout(() => {
+                        if (messageContainer.contains(messageElement)) {
+                            messageContainer.removeChild(messageElement);
+                        }
+                        
+                        // 如果容器为空，移除容器
+                        if (messageContainer.children.length === 0) {
+                            document.body.removeChild(messageContainer);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+            
+            // 添加文件行悬停样式
+            const style = document.createElement('style');
+            style.textContent = `
+                .file-row {
+                    transition: background-color 0.2s ease;
+                }
+                .delete-btn:hover {
+                    background-color: #d32f2f !important;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // 检查URL参数中的状态消息
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            const message = urlParams.get('message');
+            if (status && message) {
+                showMessage(decodeURIComponent(message), status);
+            }
+            
+            // 初始化时加载文件列表
+            // 但只有在用户已认证的情况下才加载
+            if (authCache.isAuthenticated) {
+                loadFileList();
+            }
+            
+            // 绑定文件操作事件（使用事件委托）
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('open-btn')) {
+                    const fileName = e.target.getAttribute('data-file');
+                    openFile(fileName);
+                } else if (e.target.classList.contains('delete-btn')) {
+                    const fileName = e.target.getAttribute('data-file');
+                    deleteFile(fileName);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

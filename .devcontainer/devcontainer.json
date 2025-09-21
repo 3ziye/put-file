@@ -1,18 +1,18 @@
 {
-  "name": "GoStaticServe Development Environment",
+  "name": "put-file Development Environment",
   "dockerFile": "Dockerfile",
   "context": "..",
   
-  // 设置工作目录
+  // Set working directory
   "workspaceFolder": "/workspace",
   
-  // 设置终端类型
+  // Set terminal type
   "terminal.integrated.shell.linux": "/bin/bash",
   
-  // 端口映射
+  // Port mapping
   "forwardPorts": [8080, 2345],
   
-  // 安装的VSCode扩展
+  // VSCode extensions to install
   "extensions": [
     "golang.go",
     "editorconfig.editorconfig",
@@ -23,10 +23,10 @@
     "ms-vscode-remote.remote-containers"
   ],
   
-  // 容器启动命令
-  "postCreateCommand": "go mod tidy && go install github.com/cosmtrek/air@latest && go install github.com/go-delve/delve/cmd/dlv@latest",
+  // Container startup command
+  "postCreateCommand": "",
   
-  // 环境变量
+  // Environment variables
   "containerEnv": {
     "GO111MODULE": "on",
     "SERVER_PORT": "8080",
@@ -34,14 +34,14 @@
     "SERVER_LOG_LEVEL": "DEBUG"
   },
   
-  // 挂载卷
+  // Mount volumes
   "mounts": [
     "source=${localWorkspaceFolder},target=/workspace,type=bind",
     "source=go-pkg,target=/go/pkg,type=volume",
     "source=go-build,target=/root/.cache/go-build,type=volume"
   ],
   
-  // 自定义容器功能
+  // Custom container features
   "customizations": {
     "vscode": {
       "settings": {
@@ -58,7 +58,7 @@
     }
   },
   
-  // 运行参数
+  // Run arguments
   "runArgs": [
     "--cap-add=SYS_PTRACE",
     "--security-opt",

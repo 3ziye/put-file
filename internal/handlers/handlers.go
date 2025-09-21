@@ -3,18 +3,11 @@
 package handlers
 
 import (
-	"fmt"
-	"html/template"
-	"io/fs"
+	"encoding/json"
 	"net/http"
-	"os"
-	"path/filepath"
-	"sort"
-	"strings"
-	"time"
 
-	"github.com/3ziye/GoStaticServe/internal/logs"
-	"github.com/3ziye/GoStaticServe/internal/models"
+	"github.com/3ziye/put-file/internal/logs"
+	"github.com/3ziye/put-file/internal/models"
 )
 
 // SendAPIResponse Send API response

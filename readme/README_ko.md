@@ -1,15 +1,15 @@
 <h1 align="center" style="border-bottom: none"> 
      <a href="" target="_blank"> 
-         <alt="GoStaticServe" src="" width="100" height="100"> 
+         <alt="put-file" src="" width="100" height="100"> 
      </a> 
-     <br>GoStaticServe 
+     <br>put-file 
  </h1> 
  
  <div align="center" style="line-height: 2;"> 
    [<a href="/README.md">English</a>] | [<a href="/readme/README_ar.md">العربية</a>] | [<a href="/readme/README_da.md">Dansk</a>] | [<a href="/readme/README_de.md">Deutsch</a>] | [<a href="/readme/README_es.md">Español</a>] | [<a href="/readme/README_fr.md">Français</a>] | [<a href="/readme/README_it.md">Italiano</a>] | [<a href="/readme/README_ja.md">日本語</a>] | [<a href="/readme/README_ko.md">한국어</a>] | [<a href="/readme/README_nl.md">Nederlands</a>] | [<a href="/readme/README_no.md">Norsk</a>] | [<a href="/readme/README_pl.md">Polski</a>] | [<a href="/readme/README_pt.md">Português</a>] | [<a href="/readme/README_ru.md">Русский</a>] | [<a href="/readme/README_sv.md">Svenska</a>] | [<a href="/readme/README_th.md">ไทย</a>] | [<a href="/readme/README_vi.md">Tiếng Việt</a>] | [<a href="/readme/README_zh.md">中文(简体)</a>] 
    <br> 
    
-   | ** [Issues](https://github.com/3ziye/GoStaticServe/issues) ** | ** [Releases](https://github.com/3ziye/GoStaticServe/releases) ** | ** [README](https://github.com/3ziye/GoStaticServe/blob/main/README.md) ** | ** [Architecture](https://github.com/3ziye/GoStaticServe/blob/main/doc/architecture.md) ** | 
+   | ** [Issues](https://github.com/3ziye/put-file/issues) ** | ** [Releases](https://github.com/3ziye/put-file/releases) ** | ** [README](https://github.com/3ziye/put-file/blob/main/README.md) ** | ** [Architecture](https://github.com/3ziye/put-file/blob/main/doc/architecture.md) ** | 
    <br> 
    
    [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT) 
@@ -21,7 +21,7 @@
    ![status](https://img.shields.io/badge/status-Stable-green.svg) 
  </div> 
  
- <p align="center">GoStaticServe는 Go 언어로 개발된 고성능 경량 정적 파일 서버입니다. 파일 업로드, 다운로드, 삭제와 같은 기본 작업을 지원하며, 권한 제어 및 로그 기록과 같은 기능도 제공합니다.</p>
+ <p align="center">put-file는 Go 언어로 개발된 고성능 경량 정적 파일 서버입니다. 파일 업로드, 다운로드, 삭제와 같은 기본 작업을 지원하며, 권한 제어 및 로그 기록과 같은 기능도 제공합니다.</p>
 
 ## 기능
 
@@ -41,35 +41,35 @@
 #### Go를 사용하여 설치
 
 ```bash
-go install github.com/3ziye/GoStaticServe@latest
+go install github.com/3ziye/put-file@latest
 ```
 
 #### 소스 코드에서 빌드
 
 ```bash
-git clone https://github.com/3ziye/GoStaticServe.git
-cd GoStaticServe
-go mod init github.com/3ziye/GoStaticServe
-go build -o GoStaticServe cmd/server/main.go
+git clone https://github.com/3ziye/put-file.git
+cd put-file
+go mod init github.com/3ziye/put-file
+go build -o put-file cmd/server/main.go
 ```
 
 #### 사전 컴파일된 바이너리 사용
 
-GoStaticServe는 Linux, Windows 및 Mac 시스템을 위한 사전 컴파일된 바이너리 파일을 제공하며, 직접 다운로드하여 사용할 수 있습니다.
+put-file는 Linux, Windows 및 Mac 시스템을 위한 사전 컴파일된 바이너리 파일을 제공하며, 직접 다운로드하여 사용할 수 있습니다.
 
-1. [GitHub 릴리스 페이지](https://github.com/3ziye/GoStaticServe/releases)에 접속하여 해당 플랫폼에 해당하는 바이너리 파일 패키지를 다운로드합니다
+1. [GitHub 릴리스 페이지](https://github.com/3ziye/put-file/releases)에 접속하여 해당 플랫폼에 해당하는 바이너리 파일 패키지를 다운로드합니다
 
 2. 운영 체제에 따라 해당 파일을 추출합니다:
 
    **Linux:**
    ```bash
    # Linux 버전 다운로드 및 추출
-   wget https://github.com/3ziye/GoStaticServe/releases/download/vX.Y.Z/GoStaticServe_vX.Y.Z_linux_amd64.tar.gz
-tar -xzf GoStaticServe_vX.Y.Z_linux_amd64.tar.gz
-chmod +x GoStaticServe
+   wget https://github.com/3ziye/put-file/releases/download/vX.Y.Z/put-file_vX.Y.Z_linux_amd64.tar.gz
+tar -xzf put-file_vX.Y.Z_linux_amd64.tar.gz
+chmod +x put-file
    
    # 서비스 실행
-   ./GoStaticServe
+   ./put-file
    ```
    
    **Windows:**
@@ -78,18 +78,18 @@ chmod +x GoStaticServe
    # 다운로드한 zip 파일을 마우스 오른쪽 버튼으로 클릭하고 "여기에서 추출"을 선택합니다
    
    # 서비스 실행
-   .\GoStaticServe.exe
+   .\put-file.exe
    ```
    
    **Mac:**
    ```bash
    # Mac 버전 다운로드 및 추출
-   curl -OL https://github.com/3ziye/GoStaticServe/releases/download/vX.Y.Z/GoStaticServe_vX.Y.Z_darwin_amd64.tar.gz
-tar -xzf GoStaticServe_vX.Y.Z_darwin_amd64.tar.gz
-chmod +x GoStaticServe
+   curl -OL https://github.com/3ziye/put-file/releases/download/vX.Y.Z/put-file_vX.Y.Z_darwin_amd64.tar.gz
+tar -xzf put-file_vX.Y.Z_darwin_amd64.tar.gz
+chmod +x put-file
    
    # 서비스 실행
-   ./GoStaticServe
+   ./put-file
    ```
 
 3. 버전 정보 확인
@@ -99,14 +99,14 @@ chmod +x GoStaticServe
 
 Docker Hub에서 이미지를 다운로드합니다:
 ```bash
-docker pull 3ziye/gostaticserve:latest
-docker run -p 8080:8080 -v ./files:/app/uploads 3ziye/gostaticserve:latest
+docker pull 3ziye/put-file:latest
+docker run -p 8080:8080 -v ./files:/app/uploads 3ziye/put-file:latest
 ```
 
 GitHub Package에서 이미지를 다운로드합니다:
 ```bash
-docker pull ghcr.io/3ziye/gostaticserve:latest
-docker run -p 8080:8080 -v ./files:/app/uploads ghcr.io/3ziye/gostaticserve:latest
+docker pull ghcr.io/3ziye/put-file:latest
+docker run -p 8080:8080 -v ./files:/app/uploads ghcr.io/3ziye/put-file:latest
 ```
 
 ## GitHub Package Docker 이미지
@@ -116,13 +116,13 @@ docker run -p 8080:8080 -v ./files:/app/uploads ghcr.io/3ziye/gostaticserve:late
 1. Docker가 설치되어 있는지 확인합니다
 2. 다음 명령어를 실행하여 이미지를 다운로드합니다:
    ```bash
-docker pull ghcr.io/3ziye/gostaticserve:latest
+docker pull ghcr.io/3ziye/put-file:latest
    ```
 
 ### Docker 이미지 실행
 
 ```bash
-docker run -p 8080:8080 -v ./files:/app/uploads ghcr.io/3ziye/gostaticserve:latest
+docker run -p 8080:8080 -v ./files:/app/uploads ghcr.io/3ziye/put-file:latest
 ```
 
 이 명령어는 컨테이너를 실행하고, 컨테이너의 8080 포트를 호스트의 8080 포트에 매핑하고, 호스트의 `./files` 디렉토리를 컨테이너 내의 `/app/uploads` 디렉토리에 마운트합니다.
@@ -136,17 +136,17 @@ docker login ghcr.io -u GITHUB_USERNAME -p GITHUB_TOKEN
 
 2. 이미지를 빌드합니다:
    ```bash
-docker build -t ghcr.io/3ziye/gostaticserve:latest .
+docker build -t ghcr.io/3ziye/put-file:latest .
    ```
 
 3. 이미지를 업로드합니다:
    ```bash
-docker push ghcr.io/3ziye/gostaticserve:latest
+docker push ghcr.io/3ziye/put-file:latest
    ```
 
 ## 서버 자동 배포
 
-GoStaticServe는 GitHub Actions를 통해 원격 서버에 자동으로 배포할 수 있습니다. 구성에 대한 자세한 단계는 [배포 문서](doc/DEPLOYMENT.md)를 참조하세요.
+put-file는 GitHub Actions를 통해 원격 서버에 자동으로 배포할 수 있습니다. 구성에 대한 자세한 단계는 [배포 문서](doc/DEPLOYMENT.md)를 참조하세요.
 
 자동 배포의 주요 기능:
 - 🔑 GitHub Secrets를 통한 서버 자격 증명 관리

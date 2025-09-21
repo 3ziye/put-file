@@ -17,8 +17,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/3ziye/GoStaticServe/internal/config"
-	"github.com/3ziye/GoStaticServe/internal/models"
+	"github.com/3ziye/put-file/internal/config"
+	"github.com/3ziye/put-file/internal/models"
 )
 
 // End-to-end test that simulates a complete user interaction flow

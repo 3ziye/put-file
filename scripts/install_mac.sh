@@ -1,70 +1,70 @@
 #!/bin/bash
 
-# GoStaticServe Mac 安装脚本
+# put-file Mac Installation Script
 
-# 设置安装目录
-default_install_dir="$HOME/GoStaticServe"
+# Set installation directory
+default_install_dir="$HOME/put-file"
 echo "======================================="
-echo "GoStaticServe 安装脚本 (Mac)"
+echo "put-file Installation Script (Mac)"
 echo "======================================="
 
-read -p "请输入安装目录 [默认: $default_install_dir]: " install_dir
+read -p "Please enter installation directory [default: $default_install_dir]: " install_dir
 install_dir=${install_dir:-$default_install_dir}
 
-# 创建安装目录
+# Create installation directory
 mkdir -p "$install_dir"
 
-# 复制文件到安装目录
-echo "复制文件到安装目录..."
-cp GoStaticServe "$install_dir"
+# Copy files to installation directory
+echo "Copying files to installation directory..."
+cp put-file "$install_dir"
 cp config.json.example "$install_dir/config.json"
 cp README.md "$install_dir"
 cp -r web "$install_dir"
 cp -r doc "$install_dir"
 
-# 创建uploads目录
+# Create uploads directory
 mkdir -p "$install_dir/uploads"
 
-# 设置可执行权限
-chmod +x "$install_dir/GoStaticServe"
+# Set executable permissions
+chmod +x "$install_dir/put-file"
 
-# 创建启动脚本
+# Create start script
 cat > "$install_dir/start_server.sh" << EOF
 #!/bin/bash
 cd "$install_dir"
-./GoStaticServe
+./put-file
 EOF
 
 chmod +x "$install_dir/start_server.sh"
 
-# 创建启动服务器的.command文件，方便双击启动
-cat > "$install_dir/启动服务器.command" << EOF
+# Create .command file for double-click startup convenience
+cat > "$install_dir/Start Server.command" << EOF
 #!/bin/bash
 cd "$(dirname "$0")"
 ./start_server.sh
 EOF
 
-chmod +x "$install_dir/启动服务器.command"
+chmod +x "$install_dir/Start Server.command"
 
-echo "安装完成！"
+echo "Installation completed!"
 echo
 
-echo "配置说明："
-echo "- 配置文件位于 $install_dir/config.json"
+echo "Configuration notes:"
+echo "- Configuration file is located at $install_dir/config.json"
 
-echo "使用方法："
-echo "1. 方式一：双击 $install_dir/启动服务器.command 文件"
-echo "2. 方式二：打开终端，运行以下命令："
+echo "Usage:"
+echo "1. Method 1: Double-click the $install_dir/Start Server.command file"
+echo "2. Method 2: Open terminal and run the following commands:"
 echo "   cd $install_dir"
-echo "   ./start_server.sh 或 ./GoStaticServe"
-echo "3. 打开浏览器访问 http://localhost:8080"
+echo "   ./start_server.sh or ./put-file"
+echo "3. Open browser and visit http://localhost:8080"
 
-echo "如需修改默认端口或其他配置，请编辑 config.json 文件。"
+echo "To modify the default port or other configurations, please edit the config.json file."
 echo "======================================="
 
-# 询问是否要立即启动服务器
-read -p "是否立即启动服务器？(y/n) " start_now
+# Ask whether to start the server immediately
+read -p "Would you like to start the server immediately? (y/n) " start_now
 if [[ $start_now == [Yy]* ]]; then
     cd "$install_dir"
-    ./GoStaticServe
+    ./put-file
 fi

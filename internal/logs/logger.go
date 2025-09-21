@@ -3,7 +3,6 @@
 package logs
 
 import (
-	"flag"
 	"fmt"
 	"io"
 	"log"

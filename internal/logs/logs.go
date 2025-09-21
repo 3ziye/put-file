@@ -44,17 +44,3 @@ func RequestLogger(next http.Handler) http.Handler {
 		Info("%s %s %s %d %s", ip, method, path, rw.statusCode, duration)
 	})
 }
-
-
-
-// responseWriter 是 http.ResponseWriter 的包装器，用于捕获状态码
-type responseWriter struct {
-	http.ResponseWriter
-	statusCode int
-}
-
-// WriteHeader 重写 WriteHeader 方法以捕获状态码
-func (rw *responseWriter) WriteHeader(statusCode int) {
-	rw.statusCode = statusCode
-	rw.ResponseWriter.WriteHeader(statusCode)
-}
